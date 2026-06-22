@@ -1,10 +1,14 @@
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Space+Grotesk:wght@400;500;700&display=swap");
 @import "tailwindcss";
 
 @plugin "daisyui";
 
 @layer base {
   h1 {
-    @apply mb-4 text-4xl font-bold tracking-tight text-gray-900;
+    @apply mb-4 text-4xl font-bold tracking-tight text-slate-900;
+  }
+  h2 {
+    @apply mb-2 text-2xl font-bold tracking-tight text-slate-900;
   }
   ul {
     @apply list-disc pl-6;
@@ -16,6 +20,6 @@
     @apply mb-2 mt-2;
   }
   a {
-    @apply text-blue-600 hover:text-pink-400 visited:text-blue-900;
+    @apply text-orange-700 hover:text-orange-500;
   }
 }
