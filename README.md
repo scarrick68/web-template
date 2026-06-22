@@ -17,6 +17,11 @@ npm create vike@latest --- --react --tailwindcss --daisyui --eslint
 
 This app is ready to start. It's powered by [Vike](https://vike.dev) and [React](https://react.dev/learn).
 
+## Project Docs
+
+- Configuration and architecture docs: [docs/README.md](docs/README.md)
+- ADR index: [docs/README.md#adr-index](docs/README.md#adr-index)
+
 ### Environment Variables
 
 - `VITE_RAILS_PROXY_TARGET`: Dev server proxy target used by Vite for `/auth` and `/api` routes. Defaults to `http://127.0.0.1:5000`.
