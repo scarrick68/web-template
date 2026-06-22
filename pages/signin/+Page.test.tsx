@@ -62,4 +62,29 @@ describe("signin page", () => {
     expect(localStorage.getItem(TOKEN_STORAGE_KEYS.client)).toBe("client-1");
     expect(localStorage.getItem(TOKEN_STORAGE_KEYS.uid)).toBe("user@example.com");
   });
+
+  it("clears stored auth tokens and shows error when sign-in fails", async () => {
+    const user = userEvent.setup();
+    localStorage.setItem(TOKEN_STORAGE_KEYS.accessToken, "stale-token");
+    localStorage.setItem(TOKEN_STORAGE_KEYS.client, "stale-client");
+    localStorage.setItem(TOKEN_STORAGE_KEYS.uid, "stale@example.com");
+
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: false,
+      headers: new Headers(),
+      json: async () => ({ errors: ["Invalid login credentials"] }),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(<Page />);
+
+    await user.type(screen.getByLabelText(/email/i), "user@example.com");
+    await user.type(screen.getByLabelText(/password/i), "wrongpass");
+    await user.click(screen.getByRole("button", { name: /^sign in$/i }));
+
+    expect(await screen.findByText("Invalid login credentials")).toBeInTheDocument();
+    expect(localStorage.getItem(TOKEN_STORAGE_KEYS.accessToken)).toBeNull();
+    expect(localStorage.getItem(TOKEN_STORAGE_KEYS.client)).toBeNull();
+    expect(localStorage.getItem(TOKEN_STORAGE_KEYS.uid)).toBeNull();
+  });
 });

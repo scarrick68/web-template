@@ -60,4 +60,24 @@ describe("me page", () => {
 
     expect(await screen.findByText("user@example.com")).toBeInTheDocument();
   });
+
+  it("clears stored auth tokens and shows error when /me returns auth failure", async () => {
+    localStorage.setItem(TOKEN_STORAGE_KEYS.accessToken, "token-1");
+    localStorage.setItem(TOKEN_STORAGE_KEYS.client, "client-1");
+    localStorage.setItem(TOKEN_STORAGE_KEYS.uid, "user@example.com");
+
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: false,
+      headers: new Headers(),
+      json: async () => ({ errors: ["Unauthorized"] }),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(<Page />);
+
+    expect(await screen.findByText("Unauthorized")).toBeInTheDocument();
+    expect(localStorage.getItem(TOKEN_STORAGE_KEYS.accessToken)).toBeNull();
+    expect(localStorage.getItem(TOKEN_STORAGE_KEYS.client)).toBeNull();
+    expect(localStorage.getItem(TOKEN_STORAGE_KEYS.uid)).toBeNull();
+  });
 });
