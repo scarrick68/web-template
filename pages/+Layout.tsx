@@ -13,6 +13,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <nav className="topnav" aria-label="Primary">
           <Link href="/">Home</Link>
           <Link href="/signup">Sign up</Link>
+          <Link href="/signin">Sign in</Link>
+          <Link href="/me">Me</Link>
         </nav>
       </header>
       <Content>{children}</Content>

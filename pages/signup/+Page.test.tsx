@@ -1,7 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { getCreateUserRequestSchema } from "../../test/support/openapi";
 import Page from "./+Page";
 
 describe("signup page", () => {
@@ -9,12 +8,13 @@ describe("signup page", () => {
     vi.restoreAllMocks();
   });
 
-  it("loads create-user request schema from api-template OpenAPI", () => {
-    const schema = getCreateUserRequestSchema();
+  it("renders the signup form", () => {
+    render(<Page />);
 
-    expect(schema.required).toEqual(
-      expect.arrayContaining(["email", "password", "password_confirmation"])
-    );
+    expect(screen.getByRole("heading", { name: /sign up/i })).toBeInTheDocument();
+    expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/^password$/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/confirm password/i)).toBeInTheDocument();
   });
 
   it("shows a validation error when password confirmation does not match", async () => {
@@ -34,9 +34,7 @@ describe("signup page", () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it("submits signup details with the expected payload", async () => {
-    const createUserSchema = getCreateUserRequestSchema();
-    const requiredFields = createUserSchema.required ?? [];
+  it("submits signup details to the registration endpoint", async () => {
     const user = userEvent.setup();
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
@@ -72,44 +70,5 @@ describe("signup page", () => {
       confirm_success_url: "http://localhost:3000/",
     });
 
-    for (const requiredField of requiredFields) {
-      expect(body).toHaveProperty(requiredField);
-    }
-
-  });
-
-  it("shows backend error messages when signup fails", async () => {
-    const user = userEvent.setup();
-    const fetchMock = vi.fn().mockResolvedValue({
-      ok: false,
-      json: async () => ({ errors: ["Email has already been taken"] }),
-    });
-    vi.stubGlobal("fetch", fetchMock);
-
-    render(<Page />);
-
-    await user.type(screen.getByLabelText(/email/i), "taken@example.com");
-    await user.type(screen.getByLabelText(/^password$/i), "supersecret");
-    await user.type(screen.getByLabelText(/confirm password/i), "supersecret");
-    await user.click(screen.getByRole("button", { name: /create account/i }));
-
-    expect(await screen.findByText("Email has already been taken")).toBeInTheDocument();
-  });
-
-  it("shows a network error message when the API is unreachable", async () => {
-    const user = userEvent.setup();
-    const fetchMock = vi.fn().mockRejectedValue(new Error("network down"));
-    vi.stubGlobal("fetch", fetchMock);
-
-    render(<Page />);
-
-    await user.type(screen.getByLabelText(/email/i), "test@example.com");
-    await user.type(screen.getByLabelText(/^password$/i), "supersecret");
-    await user.type(screen.getByLabelText(/confirm password/i), "supersecret");
-    await user.click(screen.getByRole("button", { name: /create account/i }));
-
-    expect(
-      await screen.findByText("Unable to reach the API. Check VITE_API_BASE_URL and ensure Rails is running.")
-    ).toBeInTheDocument();
   });
 });

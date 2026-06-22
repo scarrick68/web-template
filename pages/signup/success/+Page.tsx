@@ -26,10 +26,10 @@ export default function Page() {
           Back to sign up
         </a>
         <a
-          href="http://localhost:5000/auth/sign_in"
+          href="/signin"
           className="inline-flex items-center rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-slate-700"
         >
-          Open backend sign in
+          Continue to sign in
         </a>
       </div>
     </div>
