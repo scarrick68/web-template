@@ -22,6 +22,12 @@ export default function Page() {
             Create account
           </a>
           <a
+            href="/signin"
+            className="inline-flex items-center rounded-full border border-slate-900/15 bg-white px-5 py-3 text-sm font-semibold text-slate-800 transition hover:-translate-y-0.5 hover:border-slate-900/40"
+          >
+            Sign in
+          </a>
+          <a
             href="http://localhost:3000/docs"
             className="inline-flex items-center rounded-full border border-slate-900/15 bg-white px-5 py-3 text-sm font-semibold text-slate-800 transition hover:-translate-y-0.5 hover:border-slate-900/40"
           >
