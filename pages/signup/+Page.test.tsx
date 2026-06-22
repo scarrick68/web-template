@@ -55,18 +55,14 @@ describe("signup page", () => {
       expect(fetchMock).toHaveBeenCalledTimes(1);
     });
 
-    expect(fetchMock).toHaveBeenCalledWith(
-      "/auth",
-      expect.objectContaining({
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      })
-    );
-
     const requestInit = fetchMock.mock.calls[0][1] as RequestInit;
+    const headers = requestInit.headers as Headers;
+
+    expect(fetchMock.mock.calls[0][0]).toBe("/auth");
+    expect(requestInit.method).toBe("POST");
+    expect(headers.get("content-type")).toBe("application/json");
+    expect(headers.get("accept")).toBe("application/json");
+
     const body = JSON.parse(String(requestInit.body));
 
     expect(body).toMatchObject({

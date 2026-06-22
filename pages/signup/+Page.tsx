@@ -1,4 +1,5 @@
 import { FormEvent, useState } from "react";
+import { apiBaseLabel, apiFetch, parseJsonResponse } from "../../src/api/client";
 
 type SignupState = {
   loading: boolean;
@@ -10,20 +11,12 @@ const DEFAULT_STATE: SignupState = {
   error: null,
 };
 
-const configuredApiBaseUrl =
-  (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/$/, "") || "";
-
-function apiUrl(path: string) {
-  return configuredApiBaseUrl ? `${configuredApiBaseUrl}${path}` : path;
-}
-
 export default function Page() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [status, setStatus] = useState<SignupState>(DEFAULT_STATE);
 
-  const apiBaseLabel = configuredApiBaseUrl || "(Vite proxy -> http://127.0.0.1:5000)";
   const signupCreatePath = "/auth";
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
@@ -39,21 +32,17 @@ export default function Page() {
     try {
       const confirmSuccessUrl = `${window.location.origin}/`;
 
-      const response = await fetch(apiUrl(signupCreatePath), {
+      const response = await apiFetch(signupCreatePath, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify({
+        json: {
           email,
           password,
           password_confirmation: passwordConfirmation,
           confirm_success_url: confirmSuccessUrl,
-        }),
+        },
       });
 
-      const payload = (await response.json().catch(() => ({}))) as {
+      const payload = (await parseJsonResponse(response)) as {
         errors?: string[];
         message?: string;
         data?: Record<string, unknown>;
