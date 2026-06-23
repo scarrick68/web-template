@@ -6,7 +6,7 @@ import { applyDtaAuthHeaders, type DtaAuthHeaders } from "./auth";
 const configuredApiBaseUrl =
   (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/$/, "") || "";
 
-export const apiBaseLabel = configuredApiBaseUrl || "(Vite proxy -> http://127.0.0.1:5000)";
+export const apiBaseLabel = configuredApiBaseUrl || "(Vite proxy -> http://localhost:5001)";
 
 export type ApiRequestOptions = Omit<RequestInit, "headers" | "body"> & {
   headers?: HeadersInit;

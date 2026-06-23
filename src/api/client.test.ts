@@ -13,7 +13,7 @@ describe("api/client helpers", () => {
       (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/$/, "") || "";
 
     expect(apiUrl("/auth")).toBe(configuredApiBaseUrl ? `${configuredApiBaseUrl}/auth` : "/auth");
-    expect(apiBaseLabel).toBe(configuredApiBaseUrl || "(Vite proxy -> http://127.0.0.1:5000)");
+    expect(apiBaseLabel).toBe(configuredApiBaseUrl || "(Vite proxy -> http://localhost:5001)");
   });
 
   it("extracts ahoy visitor id from cookie strings", () => {

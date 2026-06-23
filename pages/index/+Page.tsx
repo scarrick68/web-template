@@ -45,7 +45,7 @@ export default function Page() {
           <li>A UI baseline that looks intentional on desktop and mobile.</li>
         </ul>
         <div className="mt-8 rounded-2xl border border-orange-300/30 bg-orange-300/10 p-4 text-sm text-orange-100">
-          Dev mode defaults to a Vite proxy for <strong>/auth</strong> and <strong>/api</strong> to <strong>http://127.0.0.1:5000</strong>.
+          Dev mode defaults to a Vite proxy for <strong>/auth</strong> and <strong>/api</strong> to <strong>http://localhost:5001</strong>.
           Set <strong>VITE_RAILS_PROXY_TARGET</strong> to change the dev proxy target. Set <strong>VITE_API_BASE_URL</strong> only when the browser should call an absolute API URL directly.
         </div>
       </aside>

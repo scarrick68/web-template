@@ -11,6 +11,25 @@ const DEFAULT_STATE: SignupState = {
   error: null,
 };
 
+function extractSignupErrorMessage(payload: { errors?: unknown; message?: string }) {
+  if (Array.isArray(payload.errors)) {
+    return payload.errors.join(" ");
+  }
+
+  if (payload.errors && typeof payload.errors === "object") {
+    const errorHash = payload.errors as Record<string, unknown>;
+    const messages = Object.values(errorHash)
+      .flatMap((value) => (Array.isArray(value) ? value.map(String) : [String(value)]))
+      .filter((value) => value.length > 0);
+
+    if (messages.length > 0) {
+      return messages.join(" ");
+    }
+  }
+
+  return payload.message || "Sign up failed. Please try again.";
+}
+
 export default function Page() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -31,15 +50,16 @@ export default function Page() {
 
     try {
       const confirmSuccessUrl = `${window.location.origin}/`;
+      const dtaSignupPayload = {
+        email,
+        password,
+        password_confirmation: passwordConfirmation,
+        confirm_success_url: confirmSuccessUrl,
+      };
 
       const response = await apiFetch(signupCreatePath, {
         method: "POST",
-        json: {
-          email,
-          password,
-          password_confirmation: passwordConfirmation,
-          confirm_success_url: confirmSuccessUrl,
-        },
+        json: dtaSignupPayload,
       });
 
       const payload = (await parseJsonResponse(response)) as {
@@ -49,7 +69,7 @@ export default function Page() {
       };
 
       if (!response.ok) {
-        const message = payload.errors?.join(" ") || payload.message || "Sign up failed. Please try again.";
+        const message = extractSignupErrorMessage(payload);
         setStatus({ loading: false, error: message });
         return;
       }
