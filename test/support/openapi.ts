@@ -20,7 +20,7 @@ let cachedSpec: OpenApiSchema | null = null;
 function loadApiTemplateOpenApi(): OpenApiSchema {
   if (cachedSpec) return cachedSpec;
 
-  const openApiPath = path.resolve(process.cwd(), "../api-template/docs/openapi.yml");
+  const openApiPath = path.resolve(process.cwd(), "../../contracts/openapi/openapi.yml");
   const raw = fs.readFileSync(openApiPath, "utf8");
   cachedSpec = parse(raw) as OpenApiSchema;
   return cachedSpec;
@@ -42,7 +42,7 @@ export function getCreateUserRequestSchema(): RequestSchema {
 
   const schema = createUserPath?.post?.requestBody?.content?.["application/json"]?.schema;
   if (!schema) {
-    throw new Error("Unable to read /api/v1/users POST request schema from api-template OpenAPI spec.");
+    throw new Error("Unable to read /api/v1/users POST request schema from workspace OpenAPI spec.");
   }
 
   return schema;

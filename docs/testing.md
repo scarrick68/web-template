@@ -45,9 +45,13 @@ This page documents the current frontend test strategy and how it validates auth
 
 ## OpenAPI Contract Source
 
-- Frontend tests read the backend OpenAPI spec from:
-  - `../api-template/docs/openapi.yml`
+- Frontend tests read the workspace OpenAPI spec from:
+  - `contracts/openapi/openapi.yml`
 - Helper used by signup tests:
   - [test/support/openapi.ts](../test/support/openapi.ts)
+
+The helper resolves this from `web-template` using `../../contracts/openapi/openapi.yml`.
+
+Before running contract-sensitive frontend tests, refresh the workspace contract file with `bin/sync-openapi` from workspace root.
 
 This is intentionally file-based today and can be automated/synchronized later.

@@ -24,7 +24,7 @@ Use two explicit environment variables with non-overlapping scope:
 - `VITE_RAILS_PROXY_TARGET`
   - Read in [vite.config.ts](../../vite.config.ts)
   - Purpose: local dev proxy target
-  - Default: `http://127.0.0.1:5000`
+  - Default: `http://localhost:5001`
 
 - `VITE_API_BASE_URL`
   - Read in [src/api/client.ts](../../src/api/client.ts)

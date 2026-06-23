@@ -10,7 +10,7 @@ This page describes the current frontend runtime configuration and API plumbing 
   - Scope: Vite dev server only.
   - Used by: [vite.config.ts](../vite.config.ts)
   - Purpose: target backend for `/auth` and `/api` proxy routes in local development.
-  - Default: `http://127.0.0.1:5000`.
+  - Default: `http://localhost:5001`.
 
 - `VITE_API_BASE_URL`
   - Scope: browser-visible frontend runtime.

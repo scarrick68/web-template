@@ -24,7 +24,7 @@ This app is ready to start. It's powered by [Vike](https://vike.dev) and [React]
 
 ### Environment Variables
 
-- `VITE_RAILS_PROXY_TARGET`: Dev server proxy target used by Vite for `/auth` and `/api` routes. Defaults to `http://127.0.0.1:5000`.
+- `VITE_RAILS_PROXY_TARGET`: Dev server proxy target used by Vite for `/auth` and `/api` routes. Defaults to `http://localhost:5001`.
 - `VITE_API_BASE_URL`: Browser-visible absolute API base URL used by frontend fetch calls. Leave empty in local same-origin proxy development.
 
 ### Plus files
