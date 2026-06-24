@@ -106,13 +106,22 @@ class TemplateRenameCommandTest < Minitest::Test
     Dir.mktmpdir("web-template-remaining-refs") do |tmpdir|
       write_fixture_files(tmpdir)
       FileUtils.mkdir_p(File.join(tmpdir, "docs"))
+      FileUtils.mkdir_p(File.join(tmpdir, "lib"))
+      FileUtils.mkdir_p(File.join(tmpdir, "test/lib"))
+      FileUtils.mkdir_p(File.join(tmpdir, "src"))
       File.write(File.join(tmpdir, "docs/manual_followup.txt"), "Legacy token: web-template\n")
+      File.write(File.join(tmpdir, "lib/template_rename_command.rb"), "Legacy token: web-template\n")
+      File.write(File.join(tmpdir, "test/lib/template_rename_command_test.rb"), "Legacy token: web-template\n")
+      File.write(File.join(tmpdir, "src/manual_followup.txt"), "Legacy token: web-template\n")
       command, _stdout, stderr = build_command(argv: ["customer-portal-web"], root_path: tmpdir)
 
       command.run
 
       assert_includes stderr.string, "WARNING: Found remaining references to previous app name outside modified files."
-      assert_includes stderr.string, "WARNING: docs/manual_followup.txt"
+      assert_includes stderr.string, "WARNING: src/manual_followup.txt"
+      refute_includes stderr.string, "WARNING: docs/manual_followup.txt"
+      refute_includes stderr.string, "WARNING: lib/template_rename_command.rb"
+      refute_includes stderr.string, "WARNING: test/lib/template_rename_command_test.rb"
       refute_includes stderr.string, "WARNING: package.json"
       refute_includes stderr.string, "WARNING: package-lock.json"
       refute_includes stderr.string, "WARNING: pages/+config.ts"

@@ -2,6 +2,15 @@
 
 # Renames web-template internals to a new web app name.
 class TemplateRenameCommand
+  IGNORED_REMAINING_REFERENCE_PATHS = [
+    "lib/template_rename_command.rb",
+    "test/lib/template_rename_command_test.rb"
+  ].freeze
+
+  IGNORED_REMAINING_REFERENCE_PREFIXES = [
+    "docs/"
+  ].freeze
+
   MODIFIED_RENAME_PATHS = [
     "package.json",
     "package-lock.json",
@@ -137,6 +146,8 @@ class TemplateRenameCommand
 
   def skip_reference_scan_path?(relative_path)
     return true if MODIFIED_RENAME_PATHS.include?(relative_path)
+    return true if IGNORED_REMAINING_REFERENCE_PATHS.include?(relative_path)
+    return true if IGNORED_REMAINING_REFERENCE_PREFIXES.any? { |prefix| relative_path.start_with?(prefix) }
 
     relative_path.start_with?(".git/") ||
       relative_path.start_with?("node_modules/") ||
