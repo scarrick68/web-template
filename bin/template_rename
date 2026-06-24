@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if ! command -v ruby >/dev/null 2>&1; then
+  echo "ERROR: Ruby is required to run bin/template_rename but was not found in PATH." >&2
+  echo "ERROR: Install Ruby (https://www.ruby-lang.org/) and try again. We recommend Mise or Rbenv for managing Ruby versions." >&2
+  exit 1
+fi
+
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+repo_root="$(cd "${script_dir}/.." && pwd)"
+
+exec ruby "${repo_root}/lib/template_rename_command.rb" "$@"

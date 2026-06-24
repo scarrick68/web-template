@@ -21,6 +21,7 @@ This app is ready to start. It's powered by [Vike](https://vike.dev) and [React]
 
 - Configuration and architecture docs: [docs/README.md](docs/README.md)
 - ADR index: [docs/README.md#adr-index](docs/README.md#adr-index)
+- Template rename utility: [docs/template-rename.md](docs/template-rename.md)
 
 ### Environment Variables
 
