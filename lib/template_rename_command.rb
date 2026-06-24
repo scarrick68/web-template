@@ -115,7 +115,7 @@ class TemplateRenameCommand
 
     @stderr.puts("WARNING: Found remaining references to previous app name outside modified files.")
     @stderr.puts("WARNING: Review and update these paths manually if needed.")
-    matches.each { |path| @stderr.puts("WARNING: #{path}") }
+    matches.each { |path| @stderr.puts("WARNING: #{path}: contains reference to '#{old_name}'") }
   end
 
   def remaining_reference_matches(old_name)
