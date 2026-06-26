@@ -20,6 +20,7 @@ This app is ready to start. It's powered by [Vike](https://vike.dev) and [React]
 ## Project Docs
 
 - Configuration and architecture docs: [docs/README.md](docs/README.md)
+- SSG for SEO guide: [docs/seo-ssg.md](docs/seo-ssg.md)
 - ADR index: [docs/README.md#adr-index](docs/README.md#adr-index)
 - Template rename utility: [docs/template-rename.md](docs/template-rename.md)
 
@@ -51,6 +52,21 @@ This app is ready to start. It's powered by [Vike](https://vike.dev) and [React]
 ### SSR
 
 SSR is enabled by default. You can [disable it](https://vike.dev/ssr) for all or specific pages.
+
+### SSG Verification
+
+The route /about is configured for pre-rendering (SSG) with page-level config in pages/about/+config.ts.
+
+Run a production build:
+
+```sh
+npm run build
+```
+
+Then verify the static artifact exists:
+
+- dist/client/about/index.html
+- dist/client/about/index.pageContext.json
 
 ### HTML Streaming
 
