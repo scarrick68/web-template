@@ -5,6 +5,7 @@ This directory documents the current frontend architecture and configuration dec
 ## Current Docs
 
 - Configuration reference: [configuration.md](configuration.md)
+- SSG for SEO: [seo-ssg.md](seo-ssg.md)
 - Testing strategy and commands: [testing.md](testing.md)
 - Template rename utility: [template-rename.md](template-rename.md)
 
