@@ -8,6 +8,8 @@ This directory documents the current frontend architecture and configuration dec
 - Configuration reference: [configuration.md](configuration.md)
 - SSG for SEO: [seo-ssg.md](seo-ssg.md)
 - Testing strategy and commands: [testing.md](testing.md)
+- GitHub CI pipeline: [ci-pipeline.md](ci-pipeline.md)
+- Feature list: [web-template-features.md](web-template-features.md)
 - Template rename utility: [template-rename.md](template-rename.md)
 
 ## ADR Index
