@@ -4,6 +4,8 @@
 
 This page documents the current frontend test strategy and how it validates auth/API behavior.
 
+For the complete contract propagation pipeline (backend spec to frontend generation and tests), see [openapi-data-flow.md](openapi-data-flow.md).
+
 ## Test Runner
 
 - Tooling:
