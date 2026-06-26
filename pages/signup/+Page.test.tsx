@@ -71,4 +71,30 @@ describe("signup page", () => {
     });
 
   });
+
+  it("shows canonical API v1 error message when error object is returned", async () => {
+    const user = userEvent.setup();
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: false,
+      json: async () => ({
+        success: false,
+        request_id: "req-789",
+        error: {
+          type: "unprocessable_entity",
+          message: "Email has already been taken",
+          details: ["Email has already been taken"],
+        },
+      }),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(<Page />);
+
+    await user.type(screen.getByLabelText(/email/i), "test@example.com");
+    await user.type(screen.getByLabelText(/^password$/i), "supersecret");
+    await user.type(screen.getByLabelText(/confirm password/i), "supersecret");
+    await user.click(screen.getByRole("button", { name: /create account/i }));
+
+    expect(await screen.findByText("Email has already been taken")).toBeInTheDocument();
+  });
 });

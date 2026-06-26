@@ -1,5 +1,6 @@
 import { FormEvent, useState } from "react";
 import { apiBaseLabel, apiFetch, parseJsonResponse } from "../../src/api/client";
+import { normalizeApiErrorMessage } from "../../src/api/errors";
 
 type SignupState = {
   loading: boolean;
@@ -10,25 +11,6 @@ const DEFAULT_STATE: SignupState = {
   loading: false,
   error: null,
 };
-
-function extractSignupErrorMessage(payload: { errors?: unknown; message?: string }) {
-  if (Array.isArray(payload.errors)) {
-    return payload.errors.join(" ");
-  }
-
-  if (payload.errors && typeof payload.errors === "object") {
-    const errorHash = payload.errors as Record<string, unknown>;
-    const messages = Object.values(errorHash)
-      .flatMap((value) => (Array.isArray(value) ? value.map(String) : [String(value)]))
-      .filter((value) => value.length > 0);
-
-    if (messages.length > 0) {
-      return messages.join(" ");
-    }
-  }
-
-  return payload.message || "Sign up failed. Please try again.";
-}
 
 export default function Page() {
   const [email, setEmail] = useState("");
@@ -63,13 +45,13 @@ export default function Page() {
       });
 
       const payload = (await parseJsonResponse(response)) as {
-        errors?: string[];
+        error?: unknown;
         message?: string;
         data?: Record<string, unknown>;
       };
 
       if (!response.ok) {
-        const message = extractSignupErrorMessage(payload);
+        const message = normalizeApiErrorMessage(payload, "Sign up failed. Please try again.");
         setStatus({ loading: false, error: message });
         return;
       }

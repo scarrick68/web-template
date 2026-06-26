@@ -69,7 +69,15 @@ describe("me page", () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: false,
       headers: new Headers(),
-      json: async () => ({ errors: ["Unauthorized"] }),
+      json: async () => ({
+        success: false,
+        request_id: "req-101",
+        error: {
+          type: "unauthorized",
+          message: "Unauthorized",
+          details: ["Unauthorized"],
+        },
+      }),
     });
     vi.stubGlobal("fetch", fetchMock);
 
@@ -79,5 +87,30 @@ describe("me page", () => {
     expect(localStorage.getItem(TOKEN_STORAGE_KEYS.accessToken)).toBeNull();
     expect(localStorage.getItem(TOKEN_STORAGE_KEYS.client)).toBeNull();
     expect(localStorage.getItem(TOKEN_STORAGE_KEYS.uid)).toBeNull();
+  });
+
+  it("shows canonical API v1 error message from error object", async () => {
+    localStorage.setItem(TOKEN_STORAGE_KEYS.accessToken, "token-1");
+    localStorage.setItem(TOKEN_STORAGE_KEYS.client, "client-1");
+    localStorage.setItem(TOKEN_STORAGE_KEYS.uid, "user@example.com");
+
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: false,
+      headers: new Headers(),
+      json: async () => ({
+        success: false,
+        request_id: "req-123",
+        error: {
+          type: "forbidden",
+          message: "You are not authorized to perform this action",
+          details: ["You are not authorized to perform this action"],
+        },
+      }),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(<Page />);
+
+    expect(await screen.findByText("You are not authorized to perform this action")).toBeInTheDocument();
   });
 });

@@ -1,6 +1,7 @@
 import { FormEvent, useState } from "react";
 import { extractDtaAuthHeaders } from "../../src/api/auth";
 import { apiBaseLabel, apiFetch, parseJsonResponse } from "../../src/api/client";
+import { normalizeApiErrorMessage, type ApiErrorPayload } from "../../src/api/errors";
 import { clearAuthTokens, saveAuthTokens } from "../../src/auth/tokenStore";
 
 // Minimal sign-in page for token-auth login.
@@ -11,30 +12,10 @@ type SignInState = {
   error: string | null;
 };
 
-type ErrorPayload = {
-  errors?: string[] | Record<string, string[]>;
-  message?: string;
-};
-
 const DEFAULT_STATE: SignInState = {
   loading: false,
   error: null,
 };
-
-// Normalize API error shapes into a single user-readable message.
-function normalizeApiError(payload: ErrorPayload) {
-  if (Array.isArray(payload.errors)) {
-    return payload.errors.join(" ");
-  }
-
-  if (payload.errors && typeof payload.errors === "object") {
-    return Object.values(payload.errors)
-      .flat()
-      .join(" ");
-  }
-
-  return payload.message || "Sign in failed. Please check your credentials and try again.";
-}
 
 export default function Page() {
   const [email, setEmail] = useState("");
@@ -52,11 +33,15 @@ export default function Page() {
         json: { email, password },
       });
 
-      const payload = (await parseJsonResponse(response)) as ErrorPayload;
+      const payload = (await parseJsonResponse(response)) as ApiErrorPayload;
 
       if (!response.ok) {
         clearAuthTokens();
-        setStatus({ loading: false, error: normalizeApiError(payload) });
+        const errorMessage = normalizeApiErrorMessage(
+          payload,
+          "Sign in failed. Please check your credentials and try again.",
+        );
+        setStatus({ loading: false, error: errorMessage });
         return;
       }
 

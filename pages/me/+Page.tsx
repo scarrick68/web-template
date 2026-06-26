@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { apiBaseLabel, apiFetch, parseJsonResponse } from "../../src/api/client";
+import { normalizeApiErrorMessage, type ApiErrorPayload } from "../../src/api/errors";
 import { clearAuthTokens, getAuthTokens } from "../../src/auth/tokenStore";
 
 // Minimal authenticated smoke page.
@@ -18,11 +19,6 @@ type MeSuccessPayload = {
   data?: ApiUser;
 };
 
-type ErrorPayload = {
-  errors?: string[] | Record<string, string[]>;
-  message?: string;
-};
-
 type MeState = {
   loading: boolean;
   error: string | null;
@@ -34,21 +30,6 @@ const DEFAULT_STATE: MeState = {
   error: null,
   user: null,
 };
-
-// Normalize backend error shapes into one message for this scaffold page.
-function normalizeApiError(payload: ErrorPayload) {
-  if (Array.isArray(payload.errors)) {
-    return payload.errors.join(" ");
-  }
-
-  if (payload.errors && typeof payload.errors === "object") {
-    return Object.values(payload.errors)
-      .flat()
-      .join(" ");
-  }
-
-  return payload.message || "Unable to load current user.";
-}
 
 export default function Page() {
   const [state, setState] = useState<MeState>(DEFAULT_STATE);
@@ -68,11 +49,12 @@ export default function Page() {
         method: "GET",
         authHeaders,
       });
-      const payload = (await parseJsonResponse(response)) as MeSuccessPayload & ErrorPayload;
+      const payload = (await parseJsonResponse(response)) as MeSuccessPayload & ApiErrorPayload;
 
       if (!response.ok) {
         clearAuthTokens();
-        setState({ loading: false, error: normalizeApiError(payload), user: null });
+        const errorMessage = normalizeApiErrorMessage(payload, "Unable to load current user.");
+        setState({ loading: false, error: errorMessage, user: null });
         return;
       }
 

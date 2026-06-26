@@ -72,7 +72,15 @@ describe("signin page", () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: false,
       headers: new Headers(),
-      json: async () => ({ errors: ["Invalid login credentials"] }),
+      json: async () => ({
+        success: false,
+        request_id: "req-102",
+        error: {
+          type: "unauthorized",
+          message: "Invalid login credentials",
+          details: ["Invalid login credentials"],
+        },
+      }),
     });
     vi.stubGlobal("fetch", fetchMock);
 
@@ -86,5 +94,32 @@ describe("signin page", () => {
     expect(localStorage.getItem(TOKEN_STORAGE_KEYS.accessToken)).toBeNull();
     expect(localStorage.getItem(TOKEN_STORAGE_KEYS.client)).toBeNull();
     expect(localStorage.getItem(TOKEN_STORAGE_KEYS.uid)).toBeNull();
+  });
+
+  it("shows canonical API v1 error message when provided", async () => {
+    const user = userEvent.setup();
+
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: false,
+      headers: new Headers(),
+      json: async () => ({
+        success: false,
+        request_id: "req-456",
+        error: {
+          type: "unauthorized",
+          message: "Invalid login credentials. Please try again.",
+          details: ["Invalid login credentials. Please try again."],
+        },
+      }),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(<Page />);
+
+    await user.type(screen.getByLabelText(/email/i), "user@example.com");
+    await user.type(screen.getByLabelText(/password/i), "wrongpass");
+    await user.click(screen.getByRole("button", { name: /^sign in$/i }));
+
+    expect(await screen.findByText("Invalid login credentials. Please try again.")).toBeInTheDocument();
   });
 });
