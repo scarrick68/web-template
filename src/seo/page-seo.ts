@@ -15,7 +15,7 @@ function routeToLabel(route?: string) {
   const normalized = route
     .trim()
     .replace(/^\/+|\/+$/g, "")
-    .replace(/[\/_-]+/g, " ")
+    .replace(/[/_-]+/g, " ")
     .replace(/\s+/g, " ");
 
   if (!normalized) {
