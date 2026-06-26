@@ -4,6 +4,15 @@
 
 This guide documents how static site generation is used in this template for SEO-focused pages.
 
+## Foundation Implemented
+
+- Title support for all pages via global defaults and route-level overrides.
+- Meta description support via the same global + page-level config path.
+- Canonical URL support in [pages/+Head.tsx](../pages/+Head.tsx).
+- Centralized defaults in [src/seo/seo.config.ts](../src/seo/seo.config.ts).
+- Declarative per-page helper in [src/seo/page-seo.ts](../src/seo/page-seo.ts).
+- Generated crawl artifacts in [public/robots.txt](../public/robots.txt) and [public/sitemap.xml](../public/sitemap.xml).
+
 ## Why SSG Here
 
 - Search bots receive complete HTML without relying on client-side rendering.
@@ -33,6 +42,8 @@ Expected prerendered artifacts:
 
 - `dist/client/about/index.html`
 - `dist/client/about/index.pageContext.json`
+- `dist/client/robots.txt`
+- `dist/client/sitemap.xml`
 
 Expected build log signal:
 
@@ -46,7 +57,16 @@ Expected build log signal:
 3. View page source and confirm:
    - server-rendered About content exists in HTML.
    - `<title>` and `<meta name="description">` match About page config.
+   - `<link rel="canonical">` points to the expected absolute route URL.
 4. OR, curl http://localhost:3000/about and confirm the content type is `text/html` and the HTML contains the About page content.
+
+## Production Domain Setup
+
+Before launch, update the placeholder domain (`https://example.com`) in:
+
+- [src/seo/seo.config.ts](../src/seo/seo.config.ts)
+- [public/robots.txt](../public/robots.txt)
+- [public/sitemap.xml](../public/sitemap.xml)
 
 ## Recommended SEO Pattern
 

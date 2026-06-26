@@ -19,6 +19,7 @@ This app is ready to start. It's powered by [Vike](https://vike.dev) and [React]
 
 ## Project Docs
 
+- Getting started checklist: [docs/getting-started.md](docs/getting-started.md)
 - Configuration and architecture docs: [docs/README.md](docs/README.md)
 - SSG for SEO guide: [docs/seo-ssg.md](docs/seo-ssg.md)
 - ADR index: [docs/README.md#adr-index](docs/README.md#adr-index)

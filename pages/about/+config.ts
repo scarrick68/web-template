@@ -1,9 +1,11 @@
 import type { Config } from "vike/types";
+import { definePageSeo } from "../../src/seo/page-seo";
 
 const config: Config = {
+  ...definePageSeo({
+    route: "about",
+  }),
   prerender: true,
-  title: "About | Northline Web Template",
-  description: "Static About page prerendered at build time for SEO verification.",
 };
 
 export default config;
