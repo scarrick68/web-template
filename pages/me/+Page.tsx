@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
-import { apiBaseLabel, apiFetch, parseJsonResponse } from "../../src/api/client";
+import { useEffect } from "react";
+import { apiBaseLabel } from "../../src/api/client";
 import { normalizeApiErrorMessage, type ApiErrorPayload } from "../../src/api/errors";
 import { clearAuthTokens, getAuthTokens } from "../../src/auth/tokenStore";
+import { useGetApiV1UsersMe } from "../../src/gen/api";
 
 // Minimal authenticated smoke page.
 // It verifies stored DTA headers can call /api/v1/users/me.
@@ -15,68 +16,50 @@ type ApiUser = {
   updated_at: string;
 };
 
-type MeSuccessPayload = {
-  data?: ApiUser;
-};
-
 type MeState = {
   loading: boolean;
   error: string | null;
   user: ApiUser | null;
 };
 
-const DEFAULT_STATE: MeState = {
-  loading: true,
-  error: null,
-  user: null,
-};
-
 export default function Page() {
-  const [state, setState] = useState<MeState>(DEFAULT_STATE);
+  const authHeaders = getAuthTokens();
+  const shouldLoad = Boolean(authHeaders);
+  const meQuery = useGetApiV1UsersMe({
+    query: {
+      enabled: shouldLoad,
+      retry: false,
+    },
+  });
 
-  // Fetch current user using stored DTA auth headers.
-  async function loadCurrentUser() {
-    const authHeaders = getAuthTokens();
-    if (!authHeaders) {
-      setState({ loading: false, error: "No stored auth session. Please sign in first.", user: null });
-      return;
+  useEffect(() => {
+    if (shouldLoad && meQuery.data && meQuery.data.status !== 200) {
+      clearAuthTokens();
     }
+  }, [shouldLoad, meQuery.data]);
 
-    setState((prev) => ({ ...prev, loading: true, error: null }));
+  const result = meQuery.data;
+  const isSuccess = result?.status === 200;
+  const isErrorResponse = result && result.status !== 200;
+  const user = isSuccess ? (result.data.data as ApiUser | undefined) : null;
 
-    try {
-      const response = await apiFetch("/api/v1/users/me", {
-        method: "GET",
-        authHeaders,
-      });
-      const payload = (await parseJsonResponse(response)) as MeSuccessPayload & ApiErrorPayload;
+  let error: string | null = null;
 
-      if (!response.ok) {
-        clearAuthTokens();
-        const errorMessage = normalizeApiErrorMessage(payload, "Unable to load current user.");
-        setState({ loading: false, error: errorMessage, user: null });
-        return;
-      }
-
-      if (!payload.data) {
-        setState({ loading: false, error: "Current user payload missing data.", user: null });
-        return;
-      }
-
-      setState({ loading: false, error: null, user: payload.data });
-    } catch {
-      setState({
-        loading: false,
-        error: "Unable to reach the API. Check VITE_API_BASE_URL and ensure Rails is running.",
-        user: null,
-      });
-    }
+  if (!shouldLoad) {
+    error = "No stored auth session. Please sign in first.";
+  } else if (isErrorResponse) {
+    error = normalizeApiErrorMessage(result.data as ApiErrorPayload, "Unable to load current user.");
+  } else if (isSuccess && !user) {
+    error = "Current user payload missing data.";
+  } else if (meQuery.error) {
+    error = "Unable to reach the API. Check VITE_API_BASE_URL and ensure Rails is running.";
   }
 
-  // Load user once when the page mounts.
-  useEffect(() => {
-    void loadCurrentUser();
-  }, []);
+  const state: MeState = {
+    loading: shouldLoad ? meQuery.isLoading : false,
+    error,
+    user: user || null,
+  };
 
   // Clear local auth and return user to sign-in flow.
   function onSignOut() {
@@ -120,7 +103,7 @@ export default function Page() {
           <div className="flex flex-wrap gap-3">
             <button
               type="button"
-              onClick={() => void loadCurrentUser()}
+              onClick={() => void meQuery.refetch()}
               className="inline-flex items-center rounded-full border border-slate-900/15 bg-white px-5 py-3 text-sm font-semibold text-slate-800 transition hover:-translate-y-0.5 hover:border-slate-900/40"
             >
               Refresh

@@ -1,6 +1,7 @@
 import { FormEvent, useState } from "react";
-import { apiBaseLabel, apiFetch, parseJsonResponse } from "../../src/api/client";
+import { apiBaseLabel } from "../../src/api/client";
 import { normalizeApiErrorMessage } from "../../src/api/errors";
+import { usePostAuth } from "../../src/gen/api";
 
 type SignupState = {
   loading: boolean;
@@ -17,6 +18,7 @@ export default function Page() {
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [status, setStatus] = useState<SignupState>(DEFAULT_STATE);
+  const signupMutation = usePostAuth();
 
   const signupCreatePath = "/auth";
 
@@ -39,19 +41,12 @@ export default function Page() {
         confirm_success_url: confirmSuccessUrl,
       };
 
-      const response = await apiFetch(signupCreatePath, {
-        method: "POST",
-        json: dtaSignupPayload,
+      const response = await signupMutation.mutateAsync({
+        data: dtaSignupPayload,
       });
 
-      const payload = (await parseJsonResponse(response)) as {
-        error?: unknown;
-        message?: string;
-        data?: Record<string, unknown>;
-      };
-
-      if (!response.ok) {
-        const message = normalizeApiErrorMessage(payload, "Sign up failed. Please try again.");
+      if (response.status !== 200) {
+        const message = normalizeApiErrorMessage(response.data, "Sign up failed. Please try again.");
         setStatus({ loading: false, error: message });
         return;
       }

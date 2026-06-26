@@ -1,25 +1,28 @@
 import "./Layout.css";
 import "./tailwind.css";
 import { Link } from "../components/Link";
+import { AppQueryProvider } from "../src/query/provider";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="app-shell">
-      <header className="topbar">
-        <a href="/" className="brand-mark" aria-label="Home">
-          <span className="brand-dot" />
-          <span className="brand-text">Northline Web Template</span>
-        </a>
-        <nav className="topnav" aria-label="Primary">
-          <Link href="/">Home</Link>
-          <Link href="/about">About</Link>
-          <Link href="/signup">Sign up</Link>
-          <Link href="/signin">Sign in</Link>
-          <Link href="/me">Me</Link>
-        </nav>
-      </header>
-      <Content>{children}</Content>
-    </div>
+    <AppQueryProvider>
+      <div className="app-shell">
+        <header className="topbar">
+          <a href="/" className="brand-mark" aria-label="Home">
+            <span className="brand-dot" />
+            <span className="brand-text">Northline Web Template</span>
+          </a>
+          <nav className="topnav" aria-label="Primary">
+            <Link href="/">Home</Link>
+            <Link href="/about">About</Link>
+            <Link href="/signup">Sign up</Link>
+            <Link href="/signin">Sign in</Link>
+            <Link href="/me">Me</Link>
+          </nav>
+        </header>
+        <Content>{children}</Content>
+      </div>
+    </AppQueryProvider>
   );
 }
 

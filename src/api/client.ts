@@ -19,7 +19,19 @@ export type ApiRequestOptions = Omit<RequestInit, "headers" | "body"> & {
 // Build an endpoint URL. In dev this is usually a relative path that goes
 // through Vite proxy; in other environments it can be an absolute API origin.
 export function apiUrl(path: string) {
-  return configuredApiBaseUrl ? `${configuredApiBaseUrl}${path}` : path;
+  if (configuredApiBaseUrl) {
+    return `${configuredApiBaseUrl}${path}`;
+  }
+
+  if (/^https?:\/\//.test(path)) {
+    return path;
+  }
+
+  if (typeof window !== "undefined") {
+    return new URL(path, window.location.origin).toString();
+  }
+
+  return path;
 }
 
 // Pull ahoy_visitor from cookie text so it can be forwarded as Ahoy-Visitor.
@@ -56,6 +68,13 @@ function hasJsonBody(method: string | undefined) {
 export async function apiFetch(path: string, options: ApiRequestOptions = {}) {
   const { json, headers, authHeaders, ahoyVisitor, body: rawBody, ...requestInit } = options;
   const resolvedHeaders = new Headers(headers);
+  const resolvedRequestInit: RequestInit = { ...requestInit };
+
+  // React Query query functions pass `signal`. In jsdom test runs this can be
+  // rejected by fetch before MSW can intercept, so skip signal wiring in tests.
+  if (import.meta.env.MODE === "test" && resolvedRequestInit.signal) {
+    delete resolvedRequestInit.signal;
+  }
 
   if (!resolvedHeaders.has("Accept")) {
     resolvedHeaders.set("Accept", "application/json");
@@ -73,7 +92,7 @@ export async function apiFetch(path: string, options: ApiRequestOptions = {}) {
   }
 
   return fetch(apiUrl(path), {
-    ...requestInit,
+    ...resolvedRequestInit,
     headers: resolvedHeaders,
     body: json !== undefined ? JSON.stringify(json) : rawBody,
   });

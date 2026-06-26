@@ -1,8 +1,9 @@
 import { FormEvent, useState } from "react";
 import { extractDtaAuthHeaders } from "../../src/api/auth";
-import { apiBaseLabel, apiFetch, parseJsonResponse } from "../../src/api/client";
+import { apiBaseLabel } from "../../src/api/client";
 import { normalizeApiErrorMessage, type ApiErrorPayload } from "../../src/api/errors";
 import { clearAuthTokens, saveAuthTokens } from "../../src/auth/tokenStore";
+import { usePostAuthSignIn } from "../../src/gen/api";
 
 // Minimal sign-in page for token-auth login.
 // On success, it stores DTA headers locally and redirects to /me.
@@ -21,6 +22,7 @@ export default function Page() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [status, setStatus] = useState<SignInState>(DEFAULT_STATE);
+  const signInMutation = usePostAuthSignIn();
 
   // Submit credentials to DTA, persist returned headers, and route to /me.
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
@@ -28,17 +30,13 @@ export default function Page() {
     setStatus({ loading: true, error: null });
 
     try {
-      const response = await apiFetch("/auth/sign_in", {
-        method: "POST",
-        json: { email, password },
+      const response = await signInMutation.mutateAsync({
+        data: { email, password },
       });
 
-      const payload = (await parseJsonResponse(response)) as ApiErrorPayload;
-
-      if (!response.ok) {
+      if (response.status !== 200) {
         clearAuthTokens();
-        const errorMessage = normalizeApiErrorMessage(
-          payload,
+        const errorMessage = normalizeApiErrorMessage(response.data as ApiErrorPayload,
           "Sign in failed. Please check your credentials and try again.",
         );
         setStatus({ loading: false, error: errorMessage });

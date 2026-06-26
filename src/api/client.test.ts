@@ -12,7 +12,9 @@ describe("api/client helpers", () => {
     const configuredApiBaseUrl =
       (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/$/, "") || "";
 
-    expect(apiUrl("/auth")).toBe(configuredApiBaseUrl ? `${configuredApiBaseUrl}/auth` : "/auth");
+    expect(apiUrl("/auth")).toBe(
+      configuredApiBaseUrl ? `${configuredApiBaseUrl}/auth` : "http://localhost:3000/auth",
+    );
     expect(apiBaseLabel).toBe(configuredApiBaseUrl || "(Vite proxy -> http://localhost:5001)");
   });
 

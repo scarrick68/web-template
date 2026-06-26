@@ -7,6 +7,7 @@ export type ApiErrorObject = {
 export type ApiErrorPayload = {
   error?: ApiErrorObject | null;
   message?: string | null;
+  errors?: unknown;
 };
 
 function normalizeDetails(details: unknown) {
@@ -45,6 +46,11 @@ export function normalizeApiErrorMessage(payload: ApiErrorPayload, fallbackMessa
 
   if (typeof payload.message === "string" && payload.message.trim().length > 0) {
     return payload.message.trim();
+  }
+
+  const errors = normalizeDetails(payload.errors);
+  if (errors.length > 0) {
+    return errors.join(" ");
   }
 
   return fallbackMessage;

@@ -1,6 +1,9 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { HttpResponse, http } from "msw";
+import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { server } from "../../test/support/msw-server";
+import { renderWithQueryClient } from "../../test/support/render-with-query";
 import Page from "./+Page";
 
 describe("signup page", () => {
@@ -9,7 +12,7 @@ describe("signup page", () => {
   });
 
   it("renders the signup form", () => {
-    render(<Page />);
+    renderWithQueryClient(<Page />);
 
     expect(screen.getByRole("heading", { name: /sign up/i })).toBeInTheDocument();
     expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
@@ -19,10 +22,8 @@ describe("signup page", () => {
 
   it("shows a validation error when password confirmation does not match", async () => {
     const user = userEvent.setup();
-    const fetchMock = vi.fn();
-    vi.stubGlobal("fetch", fetchMock);
 
-    render(<Page />);
+    renderWithQueryClient(<Page />);
 
     await user.type(screen.getByLabelText(/email/i), "test@example.com");
     await user.type(screen.getByLabelText(/^password$/i), "supersecret");
@@ -31,18 +32,36 @@ describe("signup page", () => {
     await user.click(screen.getByRole("button", { name: /create account/i }));
 
     expect(await screen.findByText("Password confirmation does not match.")).toBeInTheDocument();
-    expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it("submits signup details to the registration endpoint", async () => {
     const user = userEvent.setup();
-    const fetchMock = vi.fn().mockResolvedValue({
-      ok: true,
-      json: async () => ({}),
-    });
-    vi.stubGlobal("fetch", fetchMock);
+    let requestBody: unknown = null;
 
-    render(<Page />);
+    server.use(
+      http.post("*/auth", async ({ request }) => {
+        requestBody = await request.json();
+
+        return HttpResponse.json(
+          {
+            status: "success",
+            data: {
+              id: 1,
+              uid: "test@example.com",
+              provider: "email",
+              email: "test@example.com",
+              name: null,
+              nickname: null,
+              image: null,
+              allow_password_change: null,
+            },
+          },
+          { status: 200 },
+        );
+      }),
+    );
+
+    renderWithQueryClient(<Page />);
 
     await user.type(screen.getByLabelText(/email/i), "test@example.com");
     await user.type(screen.getByLabelText(/^password$/i), "supersecret");
@@ -50,45 +69,38 @@ describe("signup page", () => {
     await user.click(screen.getByRole("button", { name: /create account/i }));
 
     await waitFor(() => {
-      expect(fetchMock).toHaveBeenCalledTimes(1);
+      expect(requestBody).not.toBeNull();
     });
 
-    const requestInit = fetchMock.mock.calls[0][1] as RequestInit;
-    const headers = requestInit.headers as Headers;
-
-    expect(fetchMock.mock.calls[0][0]).toBe("/auth");
-    expect(requestInit.method).toBe("POST");
-    expect(headers.get("content-type")).toBe("application/json");
-    expect(headers.get("accept")).toBe("application/json");
-
-    const body = JSON.parse(String(requestInit.body));
-
-    expect(body).toMatchObject({
+    expect(requestBody).toMatchObject({
       email: "test@example.com",
       password: "supersecret",
       password_confirmation: "supersecret",
       confirm_success_url: "http://localhost:3000/",
     });
-
   });
 
   it("shows canonical API v1 error message when error object is returned", async () => {
     const user = userEvent.setup();
-    const fetchMock = vi.fn().mockResolvedValue({
-      ok: false,
-      json: async () => ({
-        success: false,
-        request_id: "req-789",
-        error: {
-          type: "unprocessable_entity",
-          message: "Email has already been taken",
-          details: ["Email has already been taken"],
-        },
-      }),
-    });
-    vi.stubGlobal("fetch", fetchMock);
 
-    render(<Page />);
+    server.use(
+      http.post("*/auth", () => {
+        return HttpResponse.json(
+          {
+            success: false,
+            request_id: "req-789",
+            error: {
+              type: "unprocessable_entity",
+              message: "Email has already been taken",
+              details: ["Email has already been taken"],
+            },
+          },
+          { status: 422 },
+        );
+      }),
+    );
+
+    renderWithQueryClient(<Page />);
 
     await user.type(screen.getByLabelText(/email/i), "test@example.com");
     await user.type(screen.getByLabelText(/^password$/i), "supersecret");

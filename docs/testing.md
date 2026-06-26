@@ -14,6 +14,8 @@ This page documents the current frontend test strategy and how it validates auth
 
 ## Commands
 
+- Generate OpenAPI client/hooks/mocks:
+  - `npm run gen:api`
 - Run once:
   - `npm test`
 - Watch mode:
@@ -55,3 +57,15 @@ The helper resolves this from `web-template` using `../../contracts/openapi/open
 Before running contract-sensitive frontend tests, refresh the workspace contract file with `bin/sync-openapi` from workspace root.
 
 This is intentionally file-based today and can be automated/synchronized later.
+
+## Orval + MSW + React Query
+
+- Generated client and hooks:
+  - `src/gen/api.ts`
+  - `src/gen/model/*`
+- Generated MSW mock helpers:
+  - `src/gen/api.msw.ts`
+- Runtime mutator bridge used by generated client:
+  - `src/api/orval-fetch.ts`
+
+Page and API tests use MSW server handlers (instead of ad-hoc `fetch` stubs) plus a test `QueryClientProvider` wrapper for React Query hooks.
