@@ -17,6 +17,7 @@ class TemplateRenameCommandTest < Minitest::Test
       assert_equal "", stderr.string
       assert_includes stdout.string, "updated package.json"
       assert_includes stdout.string, "updated package-lock.json"
+      assert_includes stdout.string, "updated config/seo.defaults.yml"
       assert_includes stdout.string, "updated pages/+config.ts"
       assert_includes stdout.string, "updated pages/+Layout.tsx"
       assert_includes stdout.string, "updated README.md"
@@ -24,6 +25,8 @@ class TemplateRenameCommandTest < Minitest::Test
 
       assert_includes File.read(File.join(tmpdir, "package.json")), '"name": "customer-portal-web"'
       assert_includes File.read(File.join(tmpdir, "package-lock.json")), '"name": "customer-portal-web"'
+      assert_includes File.read(File.join(tmpdir, "config/seo.defaults.yml")), "siteName: Customer Portal Web"
+      assert_includes File.read(File.join(tmpdir, "config/seo.defaults.yml")), "defaultTitle: Customer Portal Web"
       assert_includes File.read(File.join(tmpdir, "pages/+config.ts")), 'title: "Customer Portal Web"'
       assert_includes File.read(File.join(tmpdir, "pages/+Layout.tsx")), "Customer Portal Web"
       assert_includes File.read(File.join(tmpdir, "README.md")), "# Customer Portal Web"
@@ -124,6 +127,7 @@ class TemplateRenameCommandTest < Minitest::Test
       refute_includes stderr.string, "WARNING: test/lib/template_rename_command_test.rb"
       refute_includes stderr.string, "WARNING: package.json"
       refute_includes stderr.string, "WARNING: package-lock.json"
+      refute_includes stderr.string, "WARNING: config/seo.defaults.yml"
       refute_includes stderr.string, "WARNING: pages/+config.ts"
       refute_includes stderr.string, "WARNING: pages/+Layout.tsx"
       refute_includes stderr.string, "WARNING: README.md"
@@ -141,6 +145,7 @@ class TemplateRenameCommandTest < Minitest::Test
 
   def write_fixture_files(tmpdir, package_name: "web-template")
     FileUtils.mkdir_p(File.join(tmpdir, "pages"))
+    FileUtils.mkdir_p(File.join(tmpdir, "config"))
 
     File.write(
       File.join(tmpdir, "package.json"),
@@ -173,6 +178,16 @@ class TemplateRenameCommandTest < Minitest::Test
           title: "Northline Web Template"
         }
       TS
+    )
+
+    File.write(
+      File.join(tmpdir, "config/seo.defaults.yml"),
+      <<~YML
+        siteName: Northline Web Template
+        siteUrl: https://example.com
+        defaultTitle: Northline Web Template
+        defaultDescription: Web starter with Rails auth flows and SEO-ready static pages.
+      YML
     )
 
     File.write(
