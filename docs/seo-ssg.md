@@ -10,8 +10,10 @@ This guide documents how static site generation is used in this template for SEO
 - Meta description support via the same global + page-level config path.
 - Canonical URL support in [pages/+Head.tsx](../pages/+Head.tsx).
 - Robots metadata support (`index,follow` and `noindex,nofollow`) in [pages/+Head.tsx](../pages/+Head.tsx).
+- Default JSON-LD structured data graph support in [pages/+Head.tsx](../pages/+Head.tsx).
 - Centralized defaults in [src/seo/seo.config.ts](../src/seo/seo.config.ts).
 - Declarative per-page helper in [src/seo/page-seo.ts](../src/seo/page-seo.ts).
+- JSON-LD helpers in [src/seo/schema.ts](../src/seo/schema.ts).
 - Generated crawl artifacts in [public/robots.txt](../public/robots.txt) and [public/sitemap.xml](../public/sitemap.xml).
 
 ## Why SSG Here
@@ -60,6 +62,7 @@ Expected build log signal:
    - `<title>` and `<meta name="description">` match About page config.
    - `<link rel="canonical">` points to the expected absolute route URL.
    - `<meta name="robots" content="index,follow">` exists for public marketing pages.
+   - `<script type="application/ld+json">` exists with `Organization`, `WebSite`, and `WebPage` in `@graph`.
 4. OR, curl http://localhost:3000/about and confirm the content type is `text/html` and the HTML contains the About page content.
 
 ## Production Domain Setup
@@ -93,12 +96,16 @@ Current default private route set in this template includes:
 - `/me`
 - `/_error`
 
-Per-page overrides can be declared in `definePageSeo`:
+## Structured Data (JSON-LD)
 
-```ts
-export default definePageSeo({
-   title: "Dashboard",
-   noindex: true,
-   nofollow: true,
-});
-```
+This template emits a default site-level JSON-LD graph on every page:
+
+- `Organization`
+- `WebSite`
+- `WebPage`
+
+Implementation is in [src/seo/schema.ts](../src/seo/schema.ts), rendered by [pages/+Head.tsx](../pages/+Head.tsx).
+
+Available helper builders for page-specific schema composition.
+
+If a product page needs additional schema nodes, combine `defaultSchemasForPath(path)` with helper output and render a composed JSON-LD graph in the page/head integration.
