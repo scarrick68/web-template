@@ -1,5 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { buildPageTitle, buildRobotsContent, canonicalUrlForPath, defaultRobotsForPath, seoConfig } from "./seo.config";
+import {
+  buildPageTitle,
+  buildRobotsContent,
+  buildSeoHeadData,
+  canonicalUrlForPath,
+  defaultOpenGraphTypeForPath,
+  defaultRobotsForPath,
+  seoConfig,
+} from "./seo.config";
 
 describe("seo config helpers", () => {
   it("uses default title when page title is not provided", () => {
@@ -30,5 +38,39 @@ describe("seo config helpers", () => {
   it("builds robots content from explicit overrides", () => {
     expect(buildRobotsContent({ noindex: true, nofollow: true })).toBe("noindex,nofollow");
     expect(buildRobotsContent({ noindex: true, nofollow: false })).toBe("noindex,follow");
+  });
+
+  it("uses article open graph type for slug detail routes", () => {
+    expect(defaultOpenGraphTypeForPath("/blog/my-post")).toBe("article");
+    expect(defaultOpenGraphTypeForPath("/docs/install-guide")).toBe("article");
+    expect(defaultOpenGraphTypeForPath("/blog")).toBe("website");
+  });
+
+  it("builds public page OG and Twitter metadata", () => {
+    const seo = buildSeoHeadData({
+      pathname: "/about",
+      title: "About | Northline Web Template",
+      description: "About page",
+    });
+
+    expect(seo.canonicalUrl).toBe("https://example.com/about");
+    expect(seo.robots).toBe("index,follow");
+    expect(seo.openGraph?.title).toBe("About | Northline Web Template");
+    expect(seo.openGraph?.type).toBe("website");
+    expect(seo.openGraph?.url).toBe("https://example.com/about");
+    expect(seo.openGraph?.image).toBe("https://example.com/og/default.png");
+    expect(seo.twitter?.card).toBe("summary_large_image");
+  });
+
+  it("does not build OG and Twitter metadata for noindex routes", () => {
+    const seo = buildSeoHeadData({
+      pathname: "/signin",
+      title: "Sign in | Northline Web Template",
+      description: "Sign in",
+    });
+
+    expect(seo.robots).toBe("noindex,nofollow");
+    expect(seo.openGraph).toBeNull();
+    expect(seo.twitter).toBeNull();
   });
 });
