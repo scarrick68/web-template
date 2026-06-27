@@ -42,3 +42,28 @@ export function canonicalUrlForPath(pathname: string) {
   const normalizedPath = pathname === "/" ? "/" : pathname.replace(/\/+$/, "") || "/";
   return new URL(normalizedPath, seoConfig.siteUrl).toString();
 }
+
+function isPrivateOrInternalPath(pathname: string) {
+  const normalizedPath = pathname.trim().replace(/\/+$/, "") || "/";
+  return ["/me", "/signin", "/signup", "/_error"].some((route) =>
+    normalizedPath === route || normalizedPath.startsWith(`${route}/`)
+  );
+}
+
+export function defaultRobotsForPath(pathname: string) {
+  return isPrivateOrInternalPath(pathname) ? "noindex,nofollow" : "index,follow";
+}
+
+export function buildRobotsContent(options: { noindex?: boolean; nofollow?: boolean; pathname?: string } = {}) {
+  const { noindex, nofollow, pathname } = options;
+  const fallback = pathname ? defaultRobotsForPath(pathname) : "index,follow";
+
+  if (noindex === undefined && nofollow === undefined) {
+    return fallback;
+  }
+
+  const shouldNoindex = noindex ?? fallback.startsWith("noindex");
+  const shouldNofollow = nofollow ?? fallback.endsWith("nofollow");
+
+  return `${shouldNoindex ? "noindex" : "index"},${shouldNofollow ? "nofollow" : "follow"}`;
+}

@@ -26,4 +26,14 @@ describe("definePageSeo", () => {
     expect(config.title).toBe("Sign in | Northline Web Template");
     expect(config.description).toBe("Sign in page");
   });
+
+  it("keeps metadata config limited to supported title/description fields", () => {
+    const config = definePageSeo({
+      title: "Dashboard",
+      description: "Private area",
+    });
+
+    expect(config.title).toBe("Dashboard | Northline Web Template");
+    expect(config.description).toBe("Private area");
+  });
 });

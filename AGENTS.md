@@ -23,6 +23,12 @@ This application consumes the Rails API and is intended to share authentication 
 - Prefer consuming API responses rather than reimplementing backend logic.
 - Keep API interaction patterns consistent with existing code.
 
+## SEO
+
+- Marketing, discovery, content, and blog pages should be prerendered when practical.
+- Marketing, discovery, content, and blog pages should define title, description, canonical URL, and robots metadata.
+- Private, authenticated, internal, and error pages should generally use `noindex,nofollow`.
+
 ## Testing
 
 - Use Vitest.

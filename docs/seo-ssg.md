@@ -9,6 +9,7 @@ This guide documents how static site generation is used in this template for SEO
 - Title support for all pages via global defaults and route-level overrides.
 - Meta description support via the same global + page-level config path.
 - Canonical URL support in [pages/+Head.tsx](../pages/+Head.tsx).
+- Robots metadata support (`index,follow` and `noindex,nofollow`) in [pages/+Head.tsx](../pages/+Head.tsx).
 - Centralized defaults in [src/seo/seo.config.ts](../src/seo/seo.config.ts).
 - Declarative per-page helper in [src/seo/page-seo.ts](../src/seo/page-seo.ts).
 - Generated crawl artifacts in [public/robots.txt](../public/robots.txt) and [public/sitemap.xml](../public/sitemap.xml).
@@ -58,6 +59,7 @@ Expected build log signal:
    - server-rendered About content exists in HTML.
    - `<title>` and `<meta name="description">` match About page config.
    - `<link rel="canonical">` points to the expected absolute route URL.
+   - `<meta name="robots" content="index,follow">` exists for public marketing pages.
 4. OR, curl http://localhost:3000/about and confirm the content type is `text/html` and the HTML contains the About page content.
 
 ## Production Domain Setup
@@ -76,3 +78,27 @@ For additional SEO-focused pages (for example `/pricing`, `/features`, `/docs`):
 2. Add `pages/<route>/+config.ts` with `prerender: true`.
 3. Set route-specific `title` and `description`.
 4. Run `npm run build` and verify generated `dist/client/<route>/index.html`.
+
+## Robots Policy
+
+Public marketing/discovery pages should generally be `index,follow`.
+
+Private, authenticated, internal, and error pages should generally be `noindex,nofollow`.
+
+Current default private route set in this template includes:
+
+- `/signin`
+- `/signup`
+- `/signup/success`
+- `/me`
+- `/_error`
+
+Per-page overrides can be declared in `definePageSeo`:
+
+```ts
+export default definePageSeo({
+   title: "Dashboard",
+   noindex: true,
+   nofollow: true,
+});
+```

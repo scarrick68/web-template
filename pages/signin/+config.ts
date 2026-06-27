@@ -3,7 +3,7 @@ import { definePageSeo } from "../../src/seo/page-seo";
 
 const config: Config = definePageSeo({
   title: "Sign in",
-  description: "Sign in to your account using Devise Token Auth headers.",
+  description: "Sign in to your account.",
 });
 
 export default config;
