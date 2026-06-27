@@ -3,7 +3,7 @@ import { definePageSeo } from "../../../src/seo/page-seo";
 
 const config: Config = definePageSeo({
   title: "Sign up successful",
-  description: "Account created successfully. Confirm your email to continue.",
+  description: "Account created successfully.",
 });
 
 export default config;

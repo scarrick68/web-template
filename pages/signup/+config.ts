@@ -3,7 +3,7 @@ import { definePageSeo } from "../../src/seo/page-seo";
 
 const config: Config = definePageSeo({
   title: "Sign up",
-  description: "Create your account with the token-auth registration flow.",
+  description: "Create your account.",
 });
 
 export default config;
