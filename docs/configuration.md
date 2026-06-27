@@ -22,19 +22,19 @@ This page describes the current frontend runtime configuration and API plumbing 
 
 The template includes centralized SEO defaults and a declarative page-level override helper.
 
-- Site-wide SEO defaults source: [config/seo.defaults.yml](../config/seo.defaults.yml)
+- Site identity and metadata source: [config/site.yml](../config/site.yml)
 - Site-wide SEO runtime loader: [src/seo/seo.config.ts](../src/seo/seo.config.ts)
 - Page-level helper: [src/seo/page-seo.ts](../src/seo/page-seo.ts)
 - Global head tags (favicon + canonical): [pages/+Head.tsx](../pages/+Head.tsx)
 
-### `config/seo.defaults.yml`
+### `config/site.yml`
 
-- Stable bootstrap/orchestration hook location for SEO site identity values.
+- Stable bootstrap/orchestration hook location for site identity values shared across features.
 - Holds `siteName`, `siteUrl`, `defaultTitle`, and `defaultDescription`.
 
 ### `src/seo/seo.config.ts`
 
-- Loads and validates values from `config/seo.defaults.yml`.
+- Loads and validates values from `config/site.yml`.
 
 - `seoConfig`
   - `siteName`: used by title formatting.

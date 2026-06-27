@@ -14,7 +14,7 @@ class TemplateRenameCommand
   MODIFIED_RENAME_PATHS = [
     "package.json",
     "package-lock.json",
-    "config/seo.defaults.yml",
+    "config/site.yml",
     "pages/+config.ts",
     "pages/+Layout.tsx",
     "README.md"
@@ -37,7 +37,7 @@ class TemplateRenameCommand
 
     rename_in_package_json(new_name)
     rename_in_package_lock_json(new_name)
-    rename_in_seo_defaults_yml(ui_title)
+    rename_in_site_yml(ui_title)
     rename_in_pages_config_ts(ui_title)
     rename_in_pages_layout_tsx(ui_title)
     rename_in_readme(ui_title)
@@ -104,8 +104,8 @@ class TemplateRenameCommand
     end
   end
 
-  def rename_in_seo_defaults_yml(ui_title)
-    rewrite_file("config/seo.defaults.yml") do |content|
+  def rename_in_site_yml(ui_title)
+    rewrite_file("config/site.yml") do |content|
       updated = content.dup
       updated.sub!(/(siteName:\s*).+$/, "\\1#{ui_title}")
       updated.sub!(/(defaultTitle:\s*).+$/, "\\1#{ui_title}")

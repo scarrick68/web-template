@@ -38,7 +38,7 @@ Use this path when you only need to initialize the web template itself.
 Run these checks regardless of which setup path you used.
 
 1. Set SEO site identity defaults.
-   - Update `siteName`, `siteUrl`, `defaultTitle`, and default metadata in [/repos/web-template/config/seo.defaults.yml](/repos/web-template/config/seo.defaults.yml).
+   - Update `siteName`, `siteUrl`, `defaultTitle`, and default metadata in [/repos/web-template/config/site.yml](/repos/web-template/config/site.yml).
 
 2. Update crawl artifacts with your production domain.
    - Replace placeholder URLs in [/repos/web-template/public/robots.txt](/repos/web-template/public/robots.txt).

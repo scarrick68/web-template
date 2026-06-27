@@ -1,5 +1,5 @@
 import { parse } from "yaml";
-import seoDefaultsRaw from "../../config/seo.defaults.yml?raw";
+import siteDefaultsRaw from "../../config/site.yml?raw";
 
 type SeoConfig = {
   siteName: string;
@@ -9,7 +9,7 @@ type SeoConfig = {
 };
 
 function loadSeoConfig(): SeoConfig {
-  const parsed = parse(seoDefaultsRaw) as Partial<SeoConfig> | null;
+  const parsed = parse(siteDefaultsRaw) as Partial<SeoConfig> | null;
 
   return {
     siteName: parsed?.siteName || "Northline Web Template",

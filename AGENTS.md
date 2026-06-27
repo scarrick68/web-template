@@ -28,6 +28,8 @@ This application consumes the Rails API and is intended to share authentication 
 - Marketing, discovery, content, and blog pages should be prerendered when practical.
 - Marketing, discovery, content, and blog pages should define title, description, canonical URL, and robots metadata.
 - Private, authenticated, internal, and error pages should generally use `noindex,nofollow`.
+- Default JSON-LD should remain enabled site-wide (`Organization`, `WebSite`, `WebPage`).
+- Use schema helpers in `src/seo/schema.ts` when adding page-specific structured data.
 
 ## Testing
 
