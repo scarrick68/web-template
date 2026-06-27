@@ -113,3 +113,54 @@ Implementation is in [src/seo/schema.ts](../src/seo/schema.ts), rendered by [pag
 Available helper builders for page-specific schema composition.
 
 If a product page needs additional schema nodes, combine `defaultSchemasForPath(path)` with helper output and render a composed JSON-LD graph in the page/head integration.
+
+Common helper builders in [src/seo/schema.ts](../src/seo/schema.ts):
+
+- `softwareApplicationSchema(...)`
+- `articleSchema(...)`
+- `techArticleSchema(...)`
+- `faqPageSchema(...)`
+- `breadcrumbListSchema(...)`
+
+## Open Graph and Twitter
+
+Open Graph and Twitter metadata are rendered from the same SEO source as title/description/canonical data.
+
+Implementation path:
+
+- [src/seo/seo.config.ts](../src/seo/seo.config.ts): builds normalized SEO head data.
+- [pages/+Head.tsx](../pages/+Head.tsx): renders canonical, robots, Open Graph, Twitter, and JSON-LD tags.
+
+Default behavior:
+
+- Public routes: emits Open Graph and Twitter tags.
+- Private/noindex routes: suppresses Open Graph and Twitter tags.
+- Route type defaults:
+  - `/blog/:slug`, `/changelog/:slug`, `/docs/:slug` => `og:type=article`
+  - other public routes => `og:type=website`
+- Fallback Open Graph image => `https://<site>/og/default.png`
+
+## What To Add During Development
+
+This template gives you safe defaults, but each product should add project-specific SEO assets and metadata.
+
+1. Add a real fallback OG image.
+   - Create [public/og/default.png](../public/og/default.png) in your brand style.
+   - Recommended size: 1200x630.
+
+2. Configure production identity values.
+   - Update [config/site.yml](../config/site.yml) with your real site name and domain.
+
+3. Add route-level SEO metadata for public pages.
+   - In each public route `+config.ts`, define specific `title` and `description` via [src/seo/page-seo.ts](../src/seo/page-seo.ts).
+
+4. Ensure public dynamic content is SSR or prerendered.
+   - Social crawlers often do not execute client-only JavaScript.
+   - If route content comes from CMS/API, return metadata with the content payload and render tags server-side.
+
+5. Extend JSON-LD for content-rich pages.
+   - Use schema helpers for docs/blog/faq/breadcrumb pages.
+   - Validate structured data with Rich Results Test before launch.
+
+6. Validate share previews before production rollout.
+   - Use Facebook Sharing Debugger and Twitter Card Validator with preview/staging URLs.

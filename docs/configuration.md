@@ -25,7 +25,8 @@ The template includes centralized SEO defaults and a declarative page-level over
 - Site identity and metadata source: [config/site.yml](../config/site.yml)
 - Site-wide SEO runtime loader: [src/seo/seo.config.ts](../src/seo/seo.config.ts)
 - Page-level helper: [src/seo/page-seo.ts](../src/seo/page-seo.ts)
-- Global head tags (favicon + canonical): [pages/+Head.tsx](../pages/+Head.tsx)
+- JSON-LD helpers: [src/seo/schema.ts](../src/seo/schema.ts)
+- Global head tags (favicon + canonical + robots + Open Graph + Twitter + JSON-LD): [pages/+Head.tsx](../pages/+Head.tsx)
 
 ### `config/site.yml`
 
@@ -49,6 +50,14 @@ The template includes centralized SEO defaults and a declarative page-level over
   - Builds absolute canonical URLs from route paths.
   - Normalizes trailing slash for non-root routes.
 
+- `buildSeoHeadData(options)`
+  - Produces normalized head metadata from a single source.
+  - Includes canonical URL, robots, Open Graph, and Twitter card data.
+  - Suppresses social tags for default noindex routes.
+
+- `defaultOpenGraphTypeForPath(pathname)`
+  - Applies route-based Open Graph type defaults (`website` vs `article`).
+
 ### `src/seo/page-seo.ts`
 
 - `definePageSeo(options)`
@@ -57,6 +66,11 @@ The template includes centralized SEO defaults and a declarative page-level over
   - Uses global defaults when fields are omitted.
 
 Rendering strategy is configured directly in each page `+config.ts` (for example `prerender: true` for SSG pages) and is intentionally not part of the SEO helper.
+
+### `src/seo/schema.ts`
+
+- JSON-LD graph builders for common schema types.
+- Includes site-level defaults (`Organization`, `WebSite`, `WebPage`) and reusable helpers for page-specific schema.
 
 ### Foundation Artifacts
 

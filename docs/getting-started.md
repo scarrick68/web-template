@@ -44,6 +44,14 @@ Run these checks regardless of which setup path you used.
    - Replace placeholder URLs in [/repos/web-template/public/robots.txt](/repos/web-template/public/robots.txt).
    - Replace placeholder URLs in [/repos/web-template/public/sitemap.xml](/repos/web-template/public/sitemap.xml).
 
+3. Add social preview fallback image.
+   - Create [/repos/web-template/public/og/default.png](/repos/web-template/public/og/default.png) (recommended 1200x630).
+   - This image is used as the default Open Graph/Twitter image for public pages.
+
+4. Review SEO helper docs before content launch.
+   - Read [/repos/web-template/docs/seo-ssg.md](/repos/web-template/docs/seo-ssg.md) for JSON-LD and Open Graph defaults.
+   - Add route-level title/description and any page-specific schema required by your product.
+
 ## Verify Web Template Only
 
 1. Verify web template commands.
