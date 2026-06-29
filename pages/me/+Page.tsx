@@ -68,56 +68,68 @@ export default function Page() {
   }
 
   return (
-    <div className="mx-auto max-w-2xl rounded-3xl border border-slate-900/10 bg-white/85 p-7 shadow-[0_24px_60px_-40px_rgba(10,15,28,0.6)] md:p-9">
-      <p className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-indigo-700">Authenticated API smoke test</p>
-      <h1 className="mb-3">My account</h1>
-      <p className="mb-6 text-sm text-slate-600">
-        API target: <strong>{apiBaseLabel}</strong>
-      </p>
+    <div className="mx-auto max-w-3xl">
+      <div className="card border border-base-300 bg-base-100 shadow-sm">
+        <div className="card-body p-6 md:p-8">
+          <div className="badge badge-secondary badge-outline">Authenticated API smoke test</div>
+          <h1>My account</h1>
+          <p className="text-sm text-base-content/70">
+            API target: <strong>{apiBaseLabel}</strong>
+          </p>
 
-      {state.loading && <p className="text-sm text-slate-700">Loading current user...</p>}
+          {state.loading && (
+            <div className="alert alert-info mt-3">
+              <span className="loading loading-spinner loading-sm" aria-hidden="true" />
+              <span>Loading current user...</span>
+            </div>
+          )}
 
-      {!state.loading && state.error && (
-        <div className="space-y-4">
-          <p className="rounded-xl bg-red-50 px-3 py-2 text-sm font-medium text-red-700">{state.error}</p>
-          <a
-            href="/signin"
-            className="inline-flex items-center rounded-full border border-slate-900/15 bg-white px-5 py-3 text-sm font-semibold text-slate-800 transition hover:-translate-y-0.5 hover:border-slate-900/40"
-          >
-            Go to sign in
-          </a>
+          {!state.loading && state.error && (
+            <div className="mt-3 space-y-4">
+              <div className="alert alert-error">
+                <span>{state.error}</span>
+              </div>
+              <a href="/signin" className="btn btn-outline">
+                Go to sign in
+              </a>
+            </div>
+          )}
+
+          {!state.loading && state.user && (
+            <div className="mt-3 space-y-5">
+              <div className="card border border-base-300 bg-base-200/50">
+                <div className="card-body gap-1 p-4">
+                  <p className="text-sm text-base-content/70">Signed in as</p>
+                  <p className="text-base font-semibold">{state.user.email}</p>
+                </div>
+              </div>
+
+              <div className="mockup-code text-xs">
+                <pre className="overflow-x-auto whitespace-pre-wrap break-all p-4">
+                  {JSON.stringify(state.user, null, 2)}
+                </pre>
+              </div>
+
+              <div className="card-actions flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() => void meQuery.refetch()}
+                  className="btn btn-outline"
+                >
+                  Refresh
+                </button>
+                <button
+                  type="button"
+                  onClick={onSignOut}
+                  className="btn btn-primary"
+                >
+                  Sign out
+                </button>
+              </div>
+            </div>
+          )}
         </div>
-      )}
-
-      {!state.loading && state.user && (
-        <div className="space-y-5">
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <p className="text-sm text-slate-600">Signed in as</p>
-            <p className="text-base font-semibold text-slate-900">{state.user.email}</p>
-          </div>
-
-          <pre className="overflow-x-auto rounded-2xl border border-slate-200 bg-slate-50 p-4 text-xs text-slate-700">
-            {JSON.stringify(state.user, null, 2)}
-          </pre>
-
-          <div className="flex flex-wrap gap-3">
-            <button
-              type="button"
-              onClick={() => void meQuery.refetch()}
-              className="inline-flex items-center rounded-full border border-slate-900/15 bg-white px-5 py-3 text-sm font-semibold text-slate-800 transition hover:-translate-y-0.5 hover:border-slate-900/40"
-            >
-              Refresh
-            </button>
-            <button
-              type="button"
-              onClick={onSignOut}
-              className="inline-flex items-center rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-slate-700"
-            >
-              Sign out
-            </button>
-          </div>
-        </div>
-      )}
+      </div>
     </div>
   );
 }

@@ -6,7 +6,7 @@ export function Link({ href, children }: { href: string; children: ReactNode }) 
   const { urlPathname } = pageContext;
   const isActive = href === "/" ? urlPathname === href : urlPathname.startsWith(href);
   return (
-    <a href={href} className={isActive ? "is-active" : undefined}>
+    <a href={href} className={`btn btn-ghost btn-sm normal-case ${isActive ? "btn-active" : ""}`}>
       {children}
     </a>
   );
