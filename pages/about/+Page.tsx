@@ -79,7 +79,7 @@ export default function Page() {
             <div className="alert alert-success">
               <span className="text-sm">
                 API-template auth architecture separates token-auth user flows from admin session flows, which maps
-                cleanly to this frontend's sign-in and authenticated-user pages.
+                cleanly to this frontend&apos;s sign-in and authenticated-user pages.
               </span>
             </div>
             <div className="alert alert-success">
