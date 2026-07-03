@@ -1,7 +1,7 @@
 {
   "name": "web-template",
   "scripts": {
-    "dev": "vike dev --port 3000 --strictPort",
+    "dev": "vike dev",
     "build": "vike build",
     "preview": "vike build && vike preview",
     "lint": "eslint .",
