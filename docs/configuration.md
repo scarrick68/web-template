@@ -6,6 +6,13 @@ This page describes the current frontend runtime configuration and API plumbing 
 
 ## Environment Variables
 
+## Local Port Policy
+
+- Frontend dev server: `3000` (fixed)
+- Backend/API dev server: `5001` (expected proxy target)
+
+This template keeps dev ports stable so local browser URLs and API proxy behavior are consistent across standalone and orchestrated startup.
+
 - `VITE_RAILS_PROXY_TARGET`
   - Scope: Vite dev server only.
   - Used by: [vite.config.ts](../vite.config.ts)

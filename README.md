@@ -30,6 +30,13 @@ This app is ready to start. It's powered by [Vike](https://vike.dev) and [React]
 - `VITE_RAILS_PROXY_TARGET`: Dev server proxy target used by Vite for `/auth` and `/api` routes. Defaults to `http://localhost:5001`.
 - `VITE_API_BASE_URL`: Browser-visible absolute API base URL used by frontend fetch calls. Leave empty in local same-origin proxy development.
 
+### Local Development Ports
+
+- Web dev server is pinned to `http://localhost:3000`.
+- API dev server is expected at `http://localhost:5001`.
+
+The dev script uses a fixed web port to keep local behavior predictable across standalone and workspace-orchestrated runs.
+
 ### Plus files
 
 [The + files are the interface](https://vike.dev/config) between Vike and your code.
