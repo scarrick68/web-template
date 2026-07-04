@@ -40,8 +40,8 @@ export default function Page() {
 
           <div className="alert alert-info mt-4">
             <div className="text-sm">
-              Dev mode defaults to a Vite proxy for <strong>/auth</strong> and <strong>/api</strong> to <strong>http://localhost:5001</strong>.
-              Set <strong>VITE_RAILS_PROXY_TARGET</strong> to change the dev proxy target. Set <strong>VITE_API_BASE_URL</strong> only when the browser should call an absolute API URL directly.
+              Browser API calls use an explicit base URL. Set <strong>VITE_API_BASE_URL</strong> to your API origin
+              (for example <strong>http://localhost:5001</strong> in local development).
             </div>
           </div>
         </div>

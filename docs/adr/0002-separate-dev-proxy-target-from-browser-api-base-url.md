@@ -1,4 +1,4 @@
-# ADR 0002: Separate Dev Proxy Target from Browser API Base URL
+# ADR 0002: Use Explicit Browser API Base URL
 
 ## Status
 
@@ -10,39 +10,30 @@ Accepted
 
 ## Context
 
-The frontend has two different API-targeting concerns:
+The frontend should use one explicit API target model across environments.
 
-1. Vite dev-server proxy target (`/auth`, `/api`) for local development.
-2. Browser runtime API base URL when frontend should call an absolute API origin directly.
-
-Using one variable for both concerns causes confusion and misconfiguration.
+Proxy-only development wiring can hide runtime behavior differences and increase configuration confusion.
 
 ## Decision
 
-Use two explicit environment variables with non-overlapping scope:
-
-- `VITE_RAILS_PROXY_TARGET`
-  - Read in [vite.config.ts](../../vite.config.ts)
-  - Purpose: local dev proxy target
-  - Default: `http://localhost:5001`
+Use one explicit environment variable:
 
 - `VITE_API_BASE_URL`
   - Read in [src/api/client.ts](../../src/api/client.ts)
-  - Purpose: browser-visible absolute API base URL
-  - Typical local value: empty string so frontend uses same-origin relative paths
+  - Purpose: browser-visible absolute API base URL in all environments
+  - Default: `http://localhost:5001`
 
 ## Consequences
 
 Positive:
 
-- Lower risk of proxy/runtime target confusion.
-- Cleaner local development behavior without CORS complexity.
-- Explicit deploy-time control for direct browser API targeting.
+- One API-targeting strategy across local, CI, and production.
+- CORS behavior exercised in development for split-origin deployments.
+- Lower risk of hidden dev-only routing behavior.
 
 Tradeoffs:
 
-- Slightly more configuration surface area.
-- Requires documentation to keep meaning clear.
+- Requires correct CORS setup for local browser requests.
 
 ## Related
 
