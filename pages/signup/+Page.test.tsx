@@ -76,7 +76,7 @@ describe("signup page", () => {
       email: "test@example.com",
       password: "supersecret",
       password_confirmation: "supersecret",
-      confirm_success_url: "http://localhost:3000/",
+      confirm_success_url: "http://localhost:3000/signup/confirmed",
     });
   });
 

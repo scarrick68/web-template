@@ -33,7 +33,7 @@ export default function Page() {
     setStatus({ loading: true, error: null });
 
     try {
-      const confirmSuccessUrl = `${window.location.origin}/`;
+      const confirmSuccessUrl = `${window.location.origin}/signup/confirmed`;
       const dtaSignupPayload = {
         email,
         password,
