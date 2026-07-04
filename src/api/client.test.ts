@@ -10,12 +10,10 @@ describe("api/client helpers", () => {
 
   it("builds endpoint URLs from configured API base or relative paths", () => {
     const configuredApiBaseUrl =
-      (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/$/, "") || "";
+      (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/$/, "") || "http://localhost:5001";
 
-    expect(apiUrl("/auth")).toBe(
-      configuredApiBaseUrl ? `${configuredApiBaseUrl}/auth` : "http://localhost:3000/auth",
-    );
-    expect(apiBaseLabel).toBe(configuredApiBaseUrl || "(Vite proxy -> http://localhost:5001)");
+    expect(apiUrl("/auth")).toBe(`${configuredApiBaseUrl}/auth`);
+    expect(apiBaseLabel).toBe(configuredApiBaseUrl);
   });
 
   it("extracts ahoy visitor id from cookie strings", () => {

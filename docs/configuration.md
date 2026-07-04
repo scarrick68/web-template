@@ -9,21 +9,37 @@ This page describes the current frontend runtime configuration and API plumbing 
 ## Local Port Policy
 
 - Frontend dev server: `3000` (fixed)
-- Backend/API dev server: `5001` (expected proxy target)
+- Backend/API dev server: `5001` (default direct API target)
 
-This template keeps dev ports stable so local browser URLs and API proxy behavior are consistent across standalone and orchestrated startup.
-
-- `VITE_RAILS_PROXY_TARGET`
-  - Scope: Vite dev server only.
-  - Used by: [vite.config.ts](../vite.config.ts)
-  - Purpose: target backend for `/auth` and `/api` proxy routes in local development.
-  - Default: `http://localhost:5001`.
+This template keeps dev ports stable so local browser URLs and API calls are predictable across standalone and orchestrated startup.
 
 - `VITE_API_BASE_URL`
   - Scope: browser-visible frontend runtime.
   - Used by: [src/api/client.ts](../src/api/client.ts)
-  - Purpose: absolute API base URL for direct browser calls.
-  - Typical local value: empty string (use same-origin paths + Vite proxy).
+  - Purpose: absolute API base URL for all browser API calls.
+  - Default: `http://localhost:5001`.
+
+## Environment Matrix (Explicit API Base URL)
+
+Use this matrix to set `VITE_API_BASE_URL` per environment.
+
+| Scenario | Frontend URL | Browser API target | `VITE_API_BASE_URL` |
+| --- | --- | --- | --- |
+| Local development | `http://localhost:3000` | local API | `http://localhost:5001` |
+| CI preview/test env | CI-provided app URL | CI API URL | environment-specific API URL |
+| Production (split origins) | `https://app.example.com` | production API | `https://api.example.com` |
+| Production (same origin via gateway) | app domain | gateway-routed API | same-origin API base (for example `https://app.example.com`) |
+
+### Practical Guidance
+
+- Keep `VITE_API_BASE_URL` explicit in every environment.
+- URL construction behavior is handled in [src/api/client.ts](../src/api/client.ts).
+- For split-origin deployments, ensure API CORS and exposed auth headers are configured correctly.
+
+### Common Misconfiguration Patterns
+
+- Forgetting scheme/host in production `VITE_API_BASE_URL` (for example using `api.example.com` instead of `https://api.example.com`).
+- Mixing multiple API targets across features instead of using one explicit base URL.
 
 ## SEO Foundation Defaults
 

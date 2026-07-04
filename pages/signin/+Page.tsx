@@ -71,8 +71,8 @@ export default function Page() {
             This form submits to the token-auth sign-in endpoint at <strong>/auth/sign_in</strong>.
           </p>
           <p className="text-sm text-base-content/70">
-            API target: <strong>{apiBaseLabel}</strong>. Leave <strong>VITE_API_BASE_URL</strong> empty to use the Vite dev
-            proxy, or set it when the browser should call an absolute API URL directly.
+            API target: <strong>{apiBaseLabel}</strong>. Set <strong>VITE_API_BASE_URL</strong> to the API origin for your
+            current environment.
           </p>
 
           <form className="mt-2 space-y-4" onSubmit={onSubmit}>

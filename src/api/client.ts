@@ -4,9 +4,9 @@
 import { applyDtaAuthHeaders, type DtaAuthHeaders } from "./auth";
 
 const configuredApiBaseUrl =
-  (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/$/, "") || "";
+  (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/$/, "") || "http://localhost:5001";
 
-export const apiBaseLabel = configuredApiBaseUrl || "(Vite proxy -> http://localhost:5001)";
+export const apiBaseLabel = configuredApiBaseUrl;
 
 export type ApiRequestOptions = Omit<RequestInit, "headers" | "body"> & {
   headers?: HeadersInit;
@@ -16,22 +16,13 @@ export type ApiRequestOptions = Omit<RequestInit, "headers" | "body"> & {
   ahoyVisitor?: string | null;
 };
 
-// Build an endpoint URL. In dev this is usually a relative path that goes
-// through Vite proxy; in other environments it can be an absolute API origin.
+// Build endpoint URLs from the explicit API base URL.
 export function apiUrl(path: string) {
-  if (configuredApiBaseUrl) {
-    return `${configuredApiBaseUrl}${path}`;
-  }
-
   if (/^https?:\/\//.test(path)) {
     return path;
   }
 
-  if (typeof window !== "undefined") {
-    return new URL(path, window.location.origin).toString();
-  }
-
-  return path;
+  return `${configuredApiBaseUrl}${path}`;
 }
 
 // Pull ahoy_visitor from cookie text so it can be forwarded as Ahoy-Visitor.
