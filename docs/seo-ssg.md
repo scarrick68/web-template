@@ -97,6 +97,7 @@ Current default private route set in this template includes:
 - `/signin`
 - `/signup`
 - `/signup/success`
+- `/signup/confirmed`
 - `/me`
 - `/_error`
 

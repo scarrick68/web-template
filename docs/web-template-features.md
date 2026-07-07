@@ -4,7 +4,7 @@
 2. API client layer with consistent request handling and JSON parsing safeguards.
 3. Token Auth-compatible header extraction and propagation for authenticated API calls.
 4. Shared API error normalization.
-5. Built-in auth pages and flows (`/signup`, `/signin`, `/me`, and signup success).
+5. Built-in auth pages and flows (`/signup`, `/signin`, `/me`, signup success, and email confirmation success).
 6. OpenAPI-aligned frontend contract testing support via workspace-synced schema.
 7. SEO defaults with per-route metadata configuration and canonical URL support.
 8. SSG-ready content pages (for example `/about`) for search indexing performance.

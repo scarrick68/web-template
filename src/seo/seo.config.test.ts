@@ -32,6 +32,7 @@ describe("seo config helpers", () => {
   it("uses noindex/nofollow defaults for private routes", () => {
     expect(defaultRobotsForPath("/signin")).toBe("noindex,nofollow");
     expect(defaultRobotsForPath("/signup/success")).toBe("noindex,nofollow");
+    expect(defaultRobotsForPath("/signup/confirmed")).toBe("noindex,nofollow");
     expect(defaultRobotsForPath("/me")).toBe("noindex,nofollow");
   });
 
