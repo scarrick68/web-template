@@ -16,7 +16,7 @@ describe("seo config helpers", () => {
   });
 
   it("builds page title with site name suffix", () => {
-    expect(buildPageTitle("About")).toBe("About | Northline Web Template");
+    expect(buildPageTitle("About")).toBe(`About | ${seoConfig.siteName}`);
   });
 
   it("builds canonical URL and normalizes trailing slash", () => {
@@ -48,15 +48,16 @@ describe("seo config helpers", () => {
   });
 
   it("builds public page OG and Twitter metadata", () => {
+    const pageTitle = `About | ${seoConfig.siteName}`;
     const seo = buildSeoHeadData({
       pathname: "/about",
-      title: "About | Northline Web Template",
+      title: pageTitle,
       description: "About page",
     });
 
     expect(seo.canonicalUrl).toBe("https://example.com/about");
     expect(seo.robots).toBe("index,follow");
-    expect(seo.openGraph?.title).toBe("About | Northline Web Template");
+    expect(seo.openGraph?.title).toBe(pageTitle);
     expect(seo.openGraph?.type).toBe("website");
     expect(seo.openGraph?.url).toBe("https://example.com/about");
     expect(seo.openGraph?.image).toBe("https://example.com/og/default.png");
@@ -64,9 +65,10 @@ describe("seo config helpers", () => {
   });
 
   it("does not build OG and Twitter metadata for noindex routes", () => {
+    const pageTitle = `Sign in | ${seoConfig.siteName}`;
     const seo = buildSeoHeadData({
       pathname: "/signin",
-      title: "Sign in | Northline Web Template",
+      title: pageTitle,
       description: "Sign in",
     });
 
