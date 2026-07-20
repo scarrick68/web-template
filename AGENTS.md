@@ -15,6 +15,7 @@ This application consumes the Rails API and is intended to share authentication 
 - Development requests may be proxied through Vite.
 - Keep business logic separate from page components when practical.
 - Update docs when extending or updating major features or application architecture.
+- Do not optimize for hypothetical misuse. Optimize for the current workflow and its established preconditions.
 
 ## API Integration
 

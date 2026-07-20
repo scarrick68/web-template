@@ -2,71 +2,111 @@ import type { DtaAuthHeaders } from "../api/auth";
 
 // Browser-local persistence for Devise Token Auth credentials.
 // This keeps token reads/writes out of page components.
-export const TOKEN_STORAGE_KEYS = {
-  accessToken: "access-token",
-  client: "client",
-  uid: "uid",
-  expiry: "expiry",
-  tokenType: "token-type",
-} as const;
+export const AUTH_STORAGE_KEY = "web-template.auth.devise-token";
+export const AUTH_STORAGE_VERSION = 1;
 
-// Guard storage access for browser-only contexts.
-function hasStorage() {
-  return typeof window !== "undefined" && typeof window.localStorage !== "undefined";
+type StoredAuthTokens = {
+  version: typeof AUTH_STORAGE_VERSION;
+  tokens: DtaAuthHeaders;
+};
+
+function getStorage(): Storage | null {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  try {
+    return window.localStorage;
+  } catch {
+    return null;
+  }
+}
+
+function normalizeAuthTokens(tokens: DtaAuthHeaders): DtaAuthHeaders {
+  return {
+    accessToken: tokens.accessToken || undefined,
+    client: tokens.client || undefined,
+    uid: tokens.uid || undefined,
+    expiry: tokens.expiry || undefined,
+    tokenType: tokens.tokenType || undefined,
+    authorization: tokens.authorization || undefined,
+  };
+}
+
+function hasValidCredentials(tokens: DtaAuthHeaders) {
+  const hasDtaTriplet = Boolean(tokens.accessToken && tokens.client && tokens.uid);
+  return hasDtaTriplet || Boolean(tokens.authorization);
 }
 
 // Persist the latest auth headers returned by sign-in/sign-up.
 export function saveAuthTokens(tokens: DtaAuthHeaders) {
-  if (!hasStorage()) return;
+  const storage = getStorage();
+  if (!storage) return;
 
-  localStorage.setItem(TOKEN_STORAGE_KEYS.accessToken, tokens.accessToken);
-  localStorage.setItem(TOKEN_STORAGE_KEYS.client, tokens.client);
-  localStorage.setItem(TOKEN_STORAGE_KEYS.uid, tokens.uid);
+  const normalizedTokens = normalizeAuthTokens(tokens);
 
-  if (tokens.expiry) {
-    localStorage.setItem(TOKEN_STORAGE_KEYS.expiry, tokens.expiry);
-  } else {
-    localStorage.removeItem(TOKEN_STORAGE_KEYS.expiry);
+  if (!hasValidCredentials(normalizedTokens)) {
+    storage.removeItem(AUTH_STORAGE_KEY);
+    return;
   }
 
-  if (tokens.tokenType) {
-    localStorage.setItem(TOKEN_STORAGE_KEYS.tokenType, tokens.tokenType);
-  } else {
-    localStorage.removeItem(TOKEN_STORAGE_KEYS.tokenType);
+  const storedTokens: StoredAuthTokens = {
+    version: AUTH_STORAGE_VERSION,
+    tokens: normalizedTokens,
+  };
+
+  try {
+    storage.setItem(AUTH_STORAGE_KEY, JSON.stringify(storedTokens));
+  } catch {
+    // Storage can fail in restricted contexts; auth can continue in memory.
   }
 }
 
 // Read auth headers from localStorage as a complete credential set.
 export function getAuthTokens(): DtaAuthHeaders | null {
-  if (!hasStorage()) return null;
+  const storage = getStorage();
+  if (!storage) return null;
 
-  const accessToken = localStorage.getItem(TOKEN_STORAGE_KEYS.accessToken);
-  const client = localStorage.getItem(TOKEN_STORAGE_KEYS.client);
-  const uid = localStorage.getItem(TOKEN_STORAGE_KEYS.uid);
+  let rawValue: string | null;
 
-  if (!accessToken || !client || !uid) {
+  try {
+    rawValue = storage.getItem(AUTH_STORAGE_KEY);
+  } catch {
     return null;
   }
 
-  const expiry = localStorage.getItem(TOKEN_STORAGE_KEYS.expiry) || undefined;
-  const tokenType = localStorage.getItem(TOKEN_STORAGE_KEYS.tokenType) || undefined;
+  if (!rawValue) return null;
 
-  return {
-    accessToken,
-    client,
-    uid,
-    expiry,
-    tokenType,
-  };
+  try {
+    const storedTokens = JSON.parse(rawValue) as Partial<StoredAuthTokens>;
+
+    if (storedTokens.version !== AUTH_STORAGE_VERSION || !storedTokens.tokens) {
+      storage.removeItem(AUTH_STORAGE_KEY);
+      return null;
+    }
+
+    const tokens = normalizeAuthTokens(storedTokens.tokens);
+
+    if (!hasValidCredentials(tokens)) {
+      storage.removeItem(AUTH_STORAGE_KEY);
+      return null;
+    }
+
+    return tokens;
+  } catch {
+    storage.removeItem(AUTH_STORAGE_KEY);
+    return null;
+  }
 }
 
 // Remove all persisted auth headers (used on sign-out or auth failure).
 export function clearAuthTokens() {
-  if (!hasStorage()) return;
+  const storage = getStorage();
+  if (!storage) return;
 
-  localStorage.removeItem(TOKEN_STORAGE_KEYS.accessToken);
-  localStorage.removeItem(TOKEN_STORAGE_KEYS.client);
-  localStorage.removeItem(TOKEN_STORAGE_KEYS.uid);
-  localStorage.removeItem(TOKEN_STORAGE_KEYS.expiry);
-  localStorage.removeItem(TOKEN_STORAGE_KEYS.tokenType);
+  try {
+    storage.removeItem(AUTH_STORAGE_KEY);
+  } catch {
+    // Best-effort cleanup.
+  }
 }

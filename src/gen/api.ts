@@ -25,6 +25,7 @@ import type {
 
 import type {
   AuthErrorResponse,
+  AuthRegisterErrorResponse,
   AuthRegisterSuccessResponse,
   AuthRequiredErrorResponse,
   AuthSessionSuccessResponse,
@@ -67,7 +68,7 @@ export type postAuthResponse200 = {
 }
 
 export type postAuthResponse422 = {
-  data: AuthErrorResponse
+  data: AuthRegisterErrorResponse
   status: 422
 }
 
@@ -106,7 +107,7 @@ export const postAuth = async (authSignUpRequest: AuthSignUpRequest, options?: R
 
 
 
-export const getPostAuthMutationOptions = <TError = AuthErrorResponse,
+export const getPostAuthMutationOptions = <TError = AuthRegisterErrorResponse,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postAuth>>, TError,{data: AuthSignUpRequest}, TContext>, request?: SecondParameter<typeof orvalFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof postAuth>>, TError,{data: AuthSignUpRequest}, TContext> => {
 
@@ -135,12 +136,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type PostAuthMutationResult = NonNullable<Awaited<ReturnType<typeof postAuth>>>
     export type PostAuthMutationBody = AuthSignUpRequest
-    export type PostAuthMutationError = AuthErrorResponse
+    export type PostAuthMutationError = AuthRegisterErrorResponse
 
     /**
  * @summary Register user account
  */
-export const usePostAuth = <TError = AuthErrorResponse,
+export const usePostAuth = <TError = AuthRegisterErrorResponse,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postAuth>>, TError,{data: AuthSignUpRequest}, TContext>, request?: SecondParameter<typeof orvalFetch>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postAuth>>,
@@ -588,11 +589,6 @@ export type postApiV1UsersResponse201 = {
   status: 201
 }
 
-export type postApiV1UsersResponse403 = {
-  data: ErrorResponse
-  status: 403
-}
-
 export type postApiV1UsersResponse422 = {
   data: ErrorResponse
   status: 422
@@ -601,7 +597,7 @@ export type postApiV1UsersResponse422 = {
 export type postApiV1UsersResponseSuccess = (postApiV1UsersResponse201) & {
   headers: Headers;
 };
-export type postApiV1UsersResponseError = (postApiV1UsersResponse403 | postApiV1UsersResponse422) & {
+export type postApiV1UsersResponseError = (postApiV1UsersResponse422) & {
   headers: Headers;
 };
 
@@ -688,15 +684,10 @@ export type getApiV1UsersMeResponse401 = {
   status: 401
 }
 
-export type getApiV1UsersMeResponse403 = {
-  data: ErrorResponse
-  status: 403
-}
-
 export type getApiV1UsersMeResponseSuccess = (getApiV1UsersMeResponse200) & {
   headers: Headers;
 };
-export type getApiV1UsersMeResponseError = (getApiV1UsersMeResponse401 | getApiV1UsersMeResponse403) & {
+export type getApiV1UsersMeResponseError = (getApiV1UsersMeResponse401) & {
   headers: Headers;
 };
 
@@ -735,7 +726,7 @@ export const getGetApiV1UsersMeQueryKey = () => {
     }
 
 
-export const getGetApiV1UsersMeQueryOptions = <TData = Awaited<ReturnType<typeof getApiV1UsersMe>>, TError = AuthRequiredErrorResponse | ErrorResponse>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiV1UsersMe>>, TError, TData>>, request?: SecondParameter<typeof orvalFetch>}
+export const getGetApiV1UsersMeQueryOptions = <TData = Awaited<ReturnType<typeof getApiV1UsersMe>>, TError = AuthRequiredErrorResponse>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiV1UsersMe>>, TError, TData>>, request?: SecondParameter<typeof orvalFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -754,10 +745,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetApiV1UsersMeQueryResult = NonNullable<Awaited<ReturnType<typeof getApiV1UsersMe>>>
-export type GetApiV1UsersMeQueryError = AuthRequiredErrorResponse | ErrorResponse
+export type GetApiV1UsersMeQueryError = AuthRequiredErrorResponse
 
 
-export function useGetApiV1UsersMe<TData = Awaited<ReturnType<typeof getApiV1UsersMe>>, TError = AuthRequiredErrorResponse | ErrorResponse>(
+export function useGetApiV1UsersMe<TData = Awaited<ReturnType<typeof getApiV1UsersMe>>, TError = AuthRequiredErrorResponse>(
   options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiV1UsersMe>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getApiV1UsersMe>>,
@@ -767,7 +758,7 @@ export function useGetApiV1UsersMe<TData = Awaited<ReturnType<typeof getApiV1Use
       >, request?: SecondParameter<typeof orvalFetch>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiV1UsersMe<TData = Awaited<ReturnType<typeof getApiV1UsersMe>>, TError = AuthRequiredErrorResponse | ErrorResponse>(
+export function useGetApiV1UsersMe<TData = Awaited<ReturnType<typeof getApiV1UsersMe>>, TError = AuthRequiredErrorResponse>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiV1UsersMe>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getApiV1UsersMe>>,
@@ -777,7 +768,7 @@ export function useGetApiV1UsersMe<TData = Awaited<ReturnType<typeof getApiV1Use
       >, request?: SecondParameter<typeof orvalFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiV1UsersMe<TData = Awaited<ReturnType<typeof getApiV1UsersMe>>, TError = AuthRequiredErrorResponse | ErrorResponse>(
+export function useGetApiV1UsersMe<TData = Awaited<ReturnType<typeof getApiV1UsersMe>>, TError = AuthRequiredErrorResponse>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiV1UsersMe>>, TError, TData>>, request?: SecondParameter<typeof orvalFetch>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
@@ -785,7 +776,7 @@ export function useGetApiV1UsersMe<TData = Awaited<ReturnType<typeof getApiV1Use
  * @summary Current authenticated user
  */
 
-export function useGetApiV1UsersMe<TData = Awaited<ReturnType<typeof getApiV1UsersMe>>, TError = AuthRequiredErrorResponse | ErrorResponse>(
+export function useGetApiV1UsersMe<TData = Awaited<ReturnType<typeof getApiV1UsersMe>>, TError = AuthRequiredErrorResponse>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiV1UsersMe>>, TError, TData>>, request?: SecondParameter<typeof orvalFetch>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {

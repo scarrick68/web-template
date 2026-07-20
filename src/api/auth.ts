@@ -10,11 +10,12 @@ export const DTA_AUTH_HEADER_NAMES = [
 ] as const;
 
 export type DtaAuthHeaders = {
-  accessToken: string;
-  client: string;
-  uid: string;
+  accessToken?: string;
+  client?: string;
+  uid?: string;
   expiry?: string;
   tokenType?: string;
+  authorization?: string;
 };
 
 // Read DTA auth headers from a response after sign-in/sign-up. Returns null when
@@ -23,18 +24,20 @@ export function extractDtaAuthHeaders(response: Pick<Response, "headers">): DtaA
   const accessToken = response.headers.get("access-token");
   const client = response.headers.get("client");
   const uid = response.headers.get("uid");
+  const authorization = response.headers.get("authorization") || undefined;
 
-  if (!accessToken || !client || !uid) {
-    return null;
+  if (accessToken && client && uid) {
+    return {
+      accessToken,
+      client,
+      uid,
+      expiry: response.headers.get("expiry") || undefined,
+      tokenType: response.headers.get("token-type") || undefined,
+      authorization,
+    };
   }
 
-  return {
-    accessToken,
-    client,
-    uid,
-    expiry: response.headers.get("expiry") || undefined,
-    tokenType: response.headers.get("token-type") || undefined,
-  };
+  return authorization ? { authorization } : null;
 }
 
 // Apply DTA auth headers to an outgoing request so protected endpoints can
@@ -44,9 +47,15 @@ export function applyDtaAuthHeaders(headers: Headers, authHeaders?: DtaAuthHeade
     return headers;
   }
 
-  headers.set("access-token", authHeaders.accessToken);
-  headers.set("client", authHeaders.client);
-  headers.set("uid", authHeaders.uid);
+  if (authHeaders.authorization) {
+    headers.set("authorization", authHeaders.authorization);
+  }
+
+  if (authHeaders.accessToken && authHeaders.client && authHeaders.uid) {
+    headers.set("access-token", authHeaders.accessToken);
+    headers.set("client", authHeaders.client);
+    headers.set("uid", authHeaders.uid);
+  }
 
   if (authHeaders.expiry) {
     headers.set("expiry", authHeaders.expiry);
