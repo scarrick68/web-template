@@ -6,6 +6,9 @@
  */
 
 export * from './authErrorResponse';
+export * from './authRegisterErrorResponse';
+export * from './authRegisterErrorResponseData';
+export * from './authRegisterErrorResponseErrors';
 export * from './authRegisterSuccessResponse';
 export * from './authRequiredErrorResponse';
 export * from './authSessionSuccessResponse';
