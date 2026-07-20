@@ -31,6 +31,18 @@ describe("api/auth helpers", () => {
     expect(extractDtaAuthHeaders({ headers })).toBeNull();
   });
 
+  it("extracts Authorization bearer token when DTA headers are absent", () => {
+    const headers = new Headers({
+      authorization: "Bearer jwt-token-1",
+    });
+
+    const result = extractDtaAuthHeaders({ headers });
+
+    expect(result).toEqual({
+      authorization: "Bearer jwt-token-1",
+    });
+  });
+
   it("applies DTA auth headers to outgoing request headers", () => {
     const headers = new Headers();
     const result = applyDtaAuthHeaders(headers, {
@@ -56,6 +68,17 @@ describe("api/auth helpers", () => {
 
     expect(result).toBe(headers);
     expect(headers.get("accept")).toBe("application/json");
+    expect(headers.get("access-token")).toBeNull();
+  });
+
+  it("applies Authorization header when bearer token is provided", () => {
+    const headers = new Headers();
+
+    applyDtaAuthHeaders(headers, {
+      authorization: "Bearer jwt-token-1",
+    });
+
+    expect(headers.get("authorization")).toBe("Bearer jwt-token-1");
     expect(headers.get("access-token")).toBeNull();
   });
 });

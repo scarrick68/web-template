@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { clearAuthTokens, getAuthTokens, saveAuthTokens, TOKEN_STORAGE_KEYS } from "./tokenStore";
+import { AUTH_STORAGE_KEY, AUTH_STORAGE_VERSION, clearAuthTokens, getAuthTokens, saveAuthTokens } from "./tokenStore";
 
 // Behavioral tests for browser auth token persistence helpers.
 
@@ -28,10 +28,34 @@ describe("auth/tokenStore", () => {
   });
 
   it("returns null when required tokens are not present", () => {
-    localStorage.setItem(TOKEN_STORAGE_KEYS.client, "client-1");
-    localStorage.setItem(TOKEN_STORAGE_KEYS.uid, "user@example.com");
+    localStorage.setItem(
+      AUTH_STORAGE_KEY,
+      JSON.stringify({
+        version: AUTH_STORAGE_VERSION,
+        tokens: {
+          client: "client-1",
+          uid: "user@example.com",
+        },
+      }),
+    );
 
     expect(getAuthTokens()).toBeNull();
+    expect(localStorage.getItem(AUTH_STORAGE_KEY)).toBeNull();
+  });
+
+  it("saves and reads Authorization-only auth tokens", () => {
+    saveAuthTokens({
+      authorization: "Bearer jwt-token-1",
+    });
+
+    expect(getAuthTokens()).toEqual({
+      accessToken: undefined,
+      client: undefined,
+      uid: undefined,
+      expiry: undefined,
+      tokenType: undefined,
+      authorization: "Bearer jwt-token-1",
+    });
   });
 
   it("clears all stored auth values", () => {
@@ -45,10 +69,30 @@ describe("auth/tokenStore", () => {
 
     clearAuthTokens();
 
-    expect(localStorage.getItem(TOKEN_STORAGE_KEYS.accessToken)).toBeNull();
-    expect(localStorage.getItem(TOKEN_STORAGE_KEYS.client)).toBeNull();
-    expect(localStorage.getItem(TOKEN_STORAGE_KEYS.uid)).toBeNull();
-    expect(localStorage.getItem(TOKEN_STORAGE_KEYS.expiry)).toBeNull();
-    expect(localStorage.getItem(TOKEN_STORAGE_KEYS.tokenType)).toBeNull();
+    expect(localStorage.getItem(AUTH_STORAGE_KEY)).toBeNull();
+  });
+
+  it("drops stored values when version is unsupported", () => {
+    localStorage.setItem(
+      AUTH_STORAGE_KEY,
+      JSON.stringify({
+        version: 999,
+        tokens: {
+          accessToken: "token-1",
+          client: "client-1",
+          uid: "user@example.com",
+        },
+      }),
+    );
+
+    expect(getAuthTokens()).toBeNull();
+    expect(localStorage.getItem(AUTH_STORAGE_KEY)).toBeNull();
+  });
+
+  it("drops malformed stored JSON", () => {
+    localStorage.setItem(AUTH_STORAGE_KEY, "not-json");
+
+    expect(getAuthTokens()).toBeNull();
+    expect(localStorage.getItem(AUTH_STORAGE_KEY)).toBeNull();
   });
 });

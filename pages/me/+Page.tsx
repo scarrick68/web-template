@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { apiBaseLabel } from "../../src/api/client";
 import { normalizeApiErrorMessage, type ApiErrorPayload } from "../../src/api/errors";
 import { clearAuthTokens, getAuthTokens } from "../../src/auth/tokenStore";
@@ -22,8 +22,24 @@ type MeState = {
   user: ApiUser | null;
 };
 
+function isAbortLikeError(error: unknown) {
+  if (!error || typeof error !== "object") return false;
+
+  const err = error as { name?: string; message?: string };
+  const name = err.name?.toLowerCase() || "";
+  const message = err.message?.toLowerCase() || "";
+
+  return name.includes("abort") || message.includes("abort") || message.includes("canceled");
+}
+
 export default function Page() {
-  const authHeaders = getAuthTokens();
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  const authHeaders = hasMounted ? getAuthTokens() : null;
   const shouldLoad = Boolean(authHeaders);
   const meQuery = useGetApiV1UsersMe({
     query: {
@@ -42,21 +58,25 @@ export default function Page() {
   const isSuccess = result?.status === 200;
   const isErrorResponse = result && result.status !== 200;
   const user = isSuccess ? (result.data.data as ApiUser | undefined) : null;
+  const hasAbortError = isAbortLikeError(meQuery.error);
+  const isLoading = !hasMounted || (shouldLoad && (meQuery.isLoading || meQuery.isFetching || (hasAbortError && !result)));
 
   let error: string | null = null;
 
-  if (!shouldLoad) {
+  if (!hasMounted) {
+    error = null;
+  } else if (!shouldLoad) {
     error = "No stored auth session. Please sign in first.";
   } else if (isErrorResponse) {
     error = normalizeApiErrorMessage(result.data as ApiErrorPayload, "Unable to load current user.");
   } else if (isSuccess && !user) {
     error = "Current user payload missing data.";
-  } else if (meQuery.error) {
+  } else if (meQuery.error && !hasAbortError) {
     error = "Unable to reach the API. Check VITE_API_BASE_URL and ensure Rails is running.";
   }
 
   const state: MeState = {
-    loading: shouldLoad ? meQuery.isLoading : false,
+    loading: isLoading,
     error,
     user: user || null,
   };

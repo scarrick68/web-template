@@ -2,7 +2,7 @@ import { HttpResponse, http } from "msw";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { TOKEN_STORAGE_KEYS } from "../../src/auth/tokenStore";
+import { getAuthTokens, saveAuthTokens } from "../../src/auth/tokenStore";
 import { server } from "../../test/support/msw-server";
 import { renderWithQueryClient } from "../../test/support/render-with-query";
 import Page from "./+Page";
@@ -63,22 +63,63 @@ describe("signin page", () => {
     await user.click(screen.getByRole("button", { name: /^sign in$/i }));
 
     await waitFor(() => {
-      expect(localStorage.getItem(TOKEN_STORAGE_KEYS.accessToken)).toBe("token-1");
+      expect(getAuthTokens()?.accessToken).toBe("token-1");
     });
 
     expect(requestBody).toEqual({
       email: "user@example.com",
       password: "supersecret",
     });
-    expect(localStorage.getItem(TOKEN_STORAGE_KEYS.client)).toBe("client-1");
-    expect(localStorage.getItem(TOKEN_STORAGE_KEYS.uid)).toBe("user@example.com");
+    expect(getAuthTokens()?.client).toBe("client-1");
+    expect(getAuthTokens()?.uid).toBe("user@example.com");
+  });
+
+  it("accepts Authorization bearer response headers on success", async () => {
+    const user = userEvent.setup();
+
+    server.use(
+      http.post("*/auth/sign_in", () => {
+        return HttpResponse.json(
+          {
+            data: {
+              id: 1,
+              uid: "user@example.com",
+              provider: "email",
+              email: "user@example.com",
+              name: null,
+              nickname: null,
+              image: null,
+              allow_password_change: null,
+            },
+          },
+          {
+            status: 200,
+            headers: {
+              authorization: "Bearer jwt-token-1",
+            },
+          },
+        );
+      }),
+    );
+
+    renderWithQueryClient(<Page />);
+
+    await user.type(screen.getByLabelText(/email/i), "user@example.com");
+    await user.type(screen.getByLabelText(/password/i), "supersecret");
+    await user.click(screen.getByRole("button", { name: /^sign in$/i }));
+
+    await waitFor(() => {
+      expect(getAuthTokens()?.authorization).toBe("Bearer jwt-token-1");
+    });
   });
 
   it("clears stored auth tokens and shows error when sign-in fails", async () => {
     const user = userEvent.setup();
-    localStorage.setItem(TOKEN_STORAGE_KEYS.accessToken, "stale-token");
-    localStorage.setItem(TOKEN_STORAGE_KEYS.client, "stale-client");
-    localStorage.setItem(TOKEN_STORAGE_KEYS.uid, "stale@example.com");
+    saveAuthTokens({
+      accessToken: "stale-token",
+      client: "stale-client",
+      uid: "stale@example.com",
+    });
 
     server.use(
       http.post("*/auth/sign_in", () => {
@@ -99,9 +140,7 @@ describe("signin page", () => {
     await user.click(screen.getByRole("button", { name: /^sign in$/i }));
 
     expect(await screen.findByText("Invalid login credentials")).toBeInTheDocument();
-    expect(localStorage.getItem(TOKEN_STORAGE_KEYS.accessToken)).toBeNull();
-    expect(localStorage.getItem(TOKEN_STORAGE_KEYS.client)).toBeNull();
-    expect(localStorage.getItem(TOKEN_STORAGE_KEYS.uid)).toBeNull();
+    expect(getAuthTokens()).toBeNull();
   });
 
   it("shows canonical API v1 error message when provided", async () => {
