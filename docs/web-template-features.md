@@ -10,6 +10,6 @@
 8. SSG-ready content pages (for example `/about`) for search indexing performance.
 9. Frontend testing stack using Vitest + Testing Library in a jsdom environment.
 10. GitHub Actions CI pipeline that runs lint, test, and production build checks.
-11. Optional first-party local CMS editor (Keystatic) for content authoring with file-backed content and Git-based publishing.
+11. Optional first-party local CMS editor (Keystatic) for content authoring with file-backed content and Git-basedx publishing.
 12. 80/20 editorial workflow gating through GitHub PRs and article status checks.
 13. CMS content integration with SEO system for strong default ranking and discoverability support
