@@ -9,11 +9,15 @@
   }
 
   h1 {
-    @apply mb-2 text-3xl font-bold tracking-tight md:text-4xl;
+    @apply mb-2 text-4xl font-bold tracking-tight md:text-5xl;
   }
 
   h2 {
-    @apply mb-2 text-xl font-semibold tracking-tight md:text-2xl;
+    @apply mb-2 text-2xl font-semibold tracking-tight md:text-3xl;
+  }
+
+  h3 {
+    @apply text-xl font-semibold tracking-tight;
   }
 
   ul {
@@ -25,6 +29,6 @@
   }
 
   p {
-    @apply mb-2 mt-2;
+    @apply mb-2 mt-2 text-base;
   }
 }

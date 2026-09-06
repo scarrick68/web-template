@@ -1,142 +1,129 @@
 export default function Page() {
+  const docsUrl = "https://github.com/scarrick68/web-template/tree/main/docs";
+  const repoUrl = "https://github.com/scarrick68/web-template";
+
   return (
-    <div className="mx-auto max-w-5xl space-y-6">
-      <section className="card border border-base-300 bg-base-100 shadow-sm">
-        <div className="card-body p-6 md:p-8">
-          <div className="badge badge-accent badge-outline">About this template</div>
-          <h1>A production-ready web template for shipping real products</h1>
-          <p className="text-base-content/80 md:text-lg">
-            This template gives you a polished frontend starting point with practical defaults for SEO, authentication
-            flows, API integration, and testing. It is designed to be reused, extended, and maintained by teams that
-            want velocity without cutting architecture corners.
-          </p>
-          <div className="card-actions mt-2 flex-wrap gap-2">
-            <a href="/signup" className="btn btn-primary">Try sign-up flow</a>
-            <a href="/signin" className="btn btn-outline">Try sign-in flow</a>
-          </div>
+    <div className="mx-auto max-w-6xl space-y-20">
+      <section className="space-y-5 border-b border-base-300 pb-10">
+        <p className="text-sm font-semibold uppercase tracking-wide text-primary">About the project</p>
+        <h1 className="max-w-4xl">A foundation for building and launching complete applications</h1>
+        <p className="max-w-3xl text-base-content/75 md:text-lg">
+          This template is for teams that want a practical open-source starting point for web, API, and mobile products.
+          It combines clear architecture with default tooling so you can ship meaningful features quickly without turning
+          generated code into framework lock-in.
+        </p>
+        <div className="flex flex-wrap gap-2">
+          <a href={docsUrl} className="btn btn-primary">View documentation</a>
+          <a href={repoUrl} className="btn btn-outline">View on GitHub</a>
         </div>
       </section>
 
-      <section className="grid gap-4 md:grid-cols-3">
-        <article className="card border border-base-300 bg-base-100 shadow-sm">
-          <div className="card-body p-5">
-            <h2 className="text-base">Built for immediate use</h2>
-            <p className="text-sm text-base-content/80">
-              Includes ready-to-use routes for home, about, sign-up, sign-in, and authenticated user checks so teams
-              can start implementing product features on day one.
-            </p>
-          </div>
-        </article>
-        <article className="card border border-base-300 bg-base-100 shadow-sm">
-          <div className="card-body p-5">
-            <h2 className="text-base">Contract-aware frontend</h2>
-            <p className="text-sm text-base-content/80">
-              OpenAPI-driven generated hooks and models, plus contract-aware tests, help keep frontend behavior aligned
-              with backend API changes.
-            </p>
-          </div>
-        </article>
-        <article className="card border border-base-300 bg-base-100 shadow-sm">
-          <div className="card-body p-5">
-            <h2 className="text-base">Hybrid rendering model</h2>
-            <p className="text-sm text-base-content/80">
-              Mix SSG pages for crawlable marketing content with SSR routes for authenticated product surfaces in a
-              single Vike application.
-            </p>
-          </div>
-        </article>
+      <section className="grid gap-10 md:grid-cols-2">
+        <div className="space-y-3">
+          <h2>Why it exists</h2>
+          <p className="text-base-content/75">
+            New projects often spend weeks rebuilding the same foundations before solving product problems. This template
+            exists to shorten that cycle: start with sensible defaults, keep boundaries explicit, and stay close to
+            normal application code your team can own.
+          </p>
+          <p className="text-base-content/75">
+            The goal is not to hide complexity. It is to move repetitive setup work out of the critical path while
+            keeping decisions visible and easy to change.
+          </p>
+        </div>
+        <div className="space-y-4">
+          <article className="rounded border border-base-300 bg-base-100 px-5 py-4">
+            <h3 className="text-lg font-semibold">Start with production-ready defaults</h3>
+            <p className="mt-1 text-sm text-base-content/75">Ship from a strong baseline instead of assembling core patterns from scratch.</p>
+          </article>
+          <article className="rounded border border-base-300 bg-base-100 px-5 py-4">
+            <h3 className="text-lg font-semibold">Keep architecture explicit and understandable</h3>
+            <p className="mt-1 text-sm text-base-content/75">Each app has clear responsibilities, with integration points designed to be obvious.</p>
+          </article>
+          <article className="rounded border border-base-300 bg-base-100 px-5 py-4">
+            <h3 className="text-lg font-semibold">Automate setup without hiding decisions</h3>
+            <p className="mt-1 text-sm text-base-content/75">Workflows are scripted for speed, but behavior stays inspectable and overridable.</p>
+          </article>
+        </div>
       </section>
 
-      <section className="card border border-base-300 bg-base-100 shadow-sm">
-        <div className="card-body p-6 md:p-7">
-          <h2>Core frontend advantages</h2>
+      <section className="space-y-5">
+        <h2>What is included</h2>
+        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          {[
+            ["Vike frontend", "SSR/SSG-capable web app with maintainable routing, UI defaults, and testing setup."],
+            ["Rails API", "Backend foundation with auth flows, admin tooling, and operational patterns."],
+            ["Expo mobile app", "Companion mobile client structure aligned to the same API and contracts."],
+            ["OpenAPI-generated integration", "Contract-driven API client generation and shared schema workflow."],
+            ["Local development tooling", "Commands for setup, validation, and day-to-day cross-repo workflows."],
+            ["Cloud provisioning and validation", "Infrastructure scripts and checks for repeatable deployment workflows."]
+          ].map(([title, text]) => (
+            <article key={title} className="space-y-1 border-l-2 border-primary/70 pl-4">
+              <h3 className="text-lg font-semibold">{title}</h3>
+              <p className="text-sm leading-6 text-base-content/75">{text}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="space-y-5">
+        <h2>How the applications work together</h2>
+        <div className="rounded border border-base-300 bg-base-100 p-6">
           <div className="grid gap-4 md:grid-cols-2">
-            <ul className="list-disc space-y-2 pl-5 text-sm text-base-content/80">
-              <li>React + Vike scaffold with filesystem routing and SSR/SSG support.</li>
-              <li>Token-auth compatible header extraction and propagation for authenticated API calls.</li>
-              <li>Shared API error normalization for consistent user-facing failures.</li>
-              <li>Vitest + Testing Library setup for route-level and API behavior tests.</li>
-            </ul>
-            <ul className="list-disc space-y-2 pl-5 text-sm text-base-content/80">
-              <li>SEO defaults with route-level metadata and canonical URL support.</li>
-              <li>SSG-ready content routes for fast first paint and search indexing.</li>
-              <li>DaisyUI-based component styling for maintainable UI evolution.</li>
-              <li>CI-friendly workflow that supports lint, test, and production build checks.</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      <section className="card border border-base-300 bg-base-100 shadow-sm">
-        <div className="card-body p-6 md:p-7">
-          <h2>Why pair it with the API template</h2>
-          <p className="text-sm text-base-content/80">
-            The frontend template is intentionally designed to work well with the Rails API template. Together they
-            provide a practical full-stack baseline with explicit auth boundaries, contract-first integration, and
-            built-in operational tooling.
-          </p>
-          <div className="grid gap-3 md:grid-cols-2">
-            <div className="alert alert-success">
-              <span className="text-sm">
-                API-template auth architecture separates token-auth user flows from admin session flows, which maps
-                cleanly to this frontend&apos;s sign-in and authenticated-user pages.
-              </span>
+            <div className="space-y-2">
+              <Node label="Vike web app" />
+              <Node label="Expo mobile app" />
+              <Arrow />
+              <Node label="Rails API" />
             </div>
-            <div className="alert alert-success">
-              <span className="text-sm">
-                OpenAPI is maintained in the API template and synced into this frontend, enabling generated clients and
-                contract-aware testing.
-              </span>
-            </div>
-            <div className="alert alert-success">
-              <span className="text-sm">
-                API-template observability and operator tooling (for example metrics, dashboards, and admin tools)
-                supports faster debugging while frontend teams iterate on product UX.
-              </span>
-            </div>
-            <div className="alert alert-success">
-              <span className="text-sm">
-                Security and reliability defaults such as throttling and standardized error envelopes create stable
-                backend behavior for frontend feature development.
-              </span>
+            <div className="space-y-2">
+              <Node label="Postgres" />
+              <Node label="OpenSearch" />
+              <Node label="Object storage" />
+              <Arrow />
+              <Node label="Workspace orchestration" />
             </div>
           </div>
         </div>
       </section>
 
-      <section className="card border border-base-300 bg-base-100 shadow-sm">
-        <div className="card-body p-6 md:p-7">
-          <h2>Full-stack orchestration benefits</h2>
-          <p className="text-sm text-base-content/80">
-            In the product-template workspace, a Ruby-first orchestration layer ties repositories together with shared
-            contracts, coordination scripts, and cross-repository workflows.
-          </p>
-          <div className="stats stats-vertical border border-base-300 bg-base-200/40 md:stats-horizontal">
-            <div className="stat">
-              <div className="stat-title">Shared contracts</div>
-              <div className="stat-desc text-xs">OpenAPI sync keeps producer and consumer repos aligned.</div>
-            </div>
-            <div className="stat">
-              <div className="stat-title">Developer workflow</div>
-              <div className="stat-desc text-xs">Commands such as bootstrap, doctor, dev, and sync-openapi reduce setup friction.</div>
-            </div>
-            <div className="stat">
-              <div className="stat-title">Integration confidence</div>
-              <div className="stat-desc text-xs">Workspace-level testing strategy focuses on cross-repository compatibility and smoke checks.</div>
-            </div>
-          </div>
+      <section className="space-y-5">
+        <h2>Principles behind the template</h2>
+        <div className="grid gap-4 md:grid-cols-2">
+          <article className="rounded border border-base-300 bg-base-100 p-4">
+            <h3 className="text-lg font-semibold">Useful defaults over endless configuration</h3>
+          </article>
+          <article className="rounded border border-base-300 bg-base-100 p-4">
+            <h3 className="text-lg font-semibold">Automation with visible behavior</h3>
+          </article>
+          <article className="rounded border border-base-300 bg-base-100 p-4">
+            <h3 className="text-lg font-semibold">Strong boundaries between applications</h3>
+          </article>
+          <article className="rounded border border-base-300 bg-base-100 p-4">
+            <h3 className="text-lg font-semibold">Generated code that stays maintainable application code</h3>
+          </article>
         </div>
       </section>
 
-      <section className="alert alert-info">
-        <div>
-          <h2 className="text-base font-semibold">Verification target</h2>
-          <p className="text-sm">
-            This route is configured for SSG. Run a production build and confirm generated artifacts exist under the
-            client build output for the about route.
-          </p>
+      <section className="rounded border border-base-300 bg-base-100 px-6 py-8 md:px-8 md:py-10">
+        <h2 className="mb-2">Build from a base your team can grow with</h2>
+        <p className="max-w-3xl text-base-content/75">
+          Start with documented defaults, clear architecture, and practical workflows. Adapt the template to your domain
+          while keeping the generated output understandable and maintainable.
+        </p>
+        <div className="mt-5 flex flex-wrap gap-2">
+          <a href={docsUrl} className="btn btn-primary">Documentation</a>
+          <a href={repoUrl} className="btn btn-outline">GitHub</a>
         </div>
       </section>
     </div>
   );
+}
+
+function Node({ label }: { label: string }) {
+  return <div className="rounded border border-base-300 bg-base-200/20 px-4 py-3 text-sm font-medium">{label}</div>;
+}
+
+function Arrow() {
+  return <div className="text-center text-base-content/40">↓</div>;
 }
