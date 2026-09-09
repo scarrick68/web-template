@@ -15,7 +15,7 @@ function truncateString(value: string, maxLength = 2_000) {
   return value.length <= maxLength ? value : `${value.slice(0, maxLength)}...[truncated]`;
 }
 
-function sanitizeValue(value: unknown): unknown {
+function sanitizeValue(value: unknown, seen: WeakSet<object> = new WeakSet()): unknown {
   if (typeof value === "string") {
     return truncateString(value);
   }
@@ -25,10 +25,15 @@ function sanitizeValue(value: unknown): unknown {
   }
 
   if (Array.isArray(value)) {
-    return value.slice(0, 20).map((entry) => sanitizeValue(entry));
+    return value.slice(0, 20).map((entry) => sanitizeValue(entry, seen));
   }
 
   if (isRecord(value)) {
+    if (seen.has(value)) {
+      return "[Circular]";
+    }
+
+    seen.add(value);
     const result: Record<string, unknown> = {};
 
     for (const [key, entry] of Object.entries(value)) {
@@ -36,7 +41,7 @@ function sanitizeValue(value: unknown): unknown {
         continue;
       }
 
-      result[key] = sanitizeValue(entry);
+      result[key] = sanitizeValue(entry, seen);
     }
 
     return result;
@@ -68,7 +73,7 @@ function toReportableError(error: unknown): ReportableError {
 }
 
 function buildMetadata(options: ReportErrorOptions): ErrorReportMetadata {
-  const visitorId = typeof document === "undefined" ? undefined : getAhoyVisitorFromCookies(document.cookie);
+  const visitorId = typeof document === "undefined" ? undefined : getAhoyVisitorFromCookies(document.cookie)?.trim() || undefined;
 
   return {
     appEnv: appEnv(),

@@ -31,6 +31,9 @@ export function installGlobalErrorHandlers() {
     void reportError(toErrorFromUnknown(event.reason), {
       origin: "unhandled_promise_rejection",
       handled: false,
+      context: {
+        reason: event.reason,
+      },
     });
   };
 

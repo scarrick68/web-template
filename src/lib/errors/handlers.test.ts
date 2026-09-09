@@ -55,6 +55,9 @@ describe("lib/errors handlers", () => {
       expect.objectContaining({
         origin: "unhandled_promise_rejection",
         handled: false,
+        context: {
+          reason: "reject boom",
+        },
       }),
     );
 

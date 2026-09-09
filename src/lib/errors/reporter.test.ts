@@ -58,4 +58,32 @@ describe("lib/errors reporter", () => {
 
     await expect(reportError(new Error("boom"))).resolves.toBeUndefined();
   });
+
+  it("sanitizes circular context values instead of throwing", () => {
+    const circular: Record<string, unknown> = { feature: "billing" };
+    circular.self = circular;
+
+    expect(() => {
+      buildErrorReportPayload("boom", {
+        context: circular,
+      });
+    }).not.toThrow();
+
+    const payload = buildErrorReportPayload("boom", {
+      context: circular,
+    });
+
+    expect(payload.context.explicit).toEqual({
+      feature: "billing",
+      self: "[Circular]",
+    });
+  });
+
+  it("omits blank ahoy visitor values from metadata", () => {
+    document.cookie = "ahoy_visitor=;path=/";
+
+    const payload = buildErrorReportPayload(new Error("boom"));
+
+    expect(payload.context.metadata.visitorId).toBeUndefined();
+  });
 });
