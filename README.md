@@ -1,3 +1,5 @@
+# Web Template Web
+
 Generated with [vike.dev/new](https://vike.dev/new) ([version 654](https://www.npmjs.com/package/create-vike/v/0.0.654)) using this command:
 
 ```sh
