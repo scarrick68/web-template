@@ -17,21 +17,7 @@ describe("signup page", () => {
     expect(screen.getByRole("heading", { name: /sign up/i })).toBeInTheDocument();
     expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/^password$/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/confirm password/i)).toBeInTheDocument();
-  });
-
-  it("shows a validation error when password confirmation does not match", async () => {
-    const user = userEvent.setup();
-
-    renderWithQueryClient(<Page />);
-
-    await user.type(screen.getByLabelText(/email/i), "test@example.com");
-    await user.type(screen.getByLabelText(/^password$/i), "supersecret");
-    await user.type(screen.getByLabelText(/confirm password/i), "different");
-
-    await user.click(screen.getByRole("button", { name: /create account/i }));
-
-    expect(await screen.findByText("Password confirmation does not match.")).toBeInTheDocument();
+    expect(screen.getByText(/body stats are collected after account creation/i)).toBeInTheDocument();
   });
 
   it("submits signup details to the registration endpoint", async () => {
@@ -65,7 +51,7 @@ describe("signup page", () => {
 
     await user.type(screen.getByLabelText(/email/i), "test@example.com");
     await user.type(screen.getByLabelText(/^password$/i), "supersecret");
-    await user.type(screen.getByLabelText(/confirm password/i), "supersecret");
+
     await user.click(screen.getByRole("button", { name: /create account/i }));
 
     await waitFor(() => {
@@ -104,7 +90,6 @@ describe("signup page", () => {
 
     await user.type(screen.getByLabelText(/email/i), "test@example.com");
     await user.type(screen.getByLabelText(/^password$/i), "supersecret");
-    await user.type(screen.getByLabelText(/confirm password/i), "supersecret");
     await user.click(screen.getByRole("button", { name: /create account/i }));
 
     expect(await screen.findByText("Email has already been taken")).toBeInTheDocument();

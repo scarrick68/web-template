@@ -16,7 +16,6 @@ const DEFAULT_STATE: SignupState = {
 export default function Page() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [status, setStatus] = useState<SignupState>(DEFAULT_STATE);
   const signupMutation = usePostAuth();
 
@@ -25,11 +24,6 @@ export default function Page() {
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (password !== passwordConfirmation) {
-      setStatus({ loading: false, error: "Password confirmation does not match." });
-      return;
-    }
-
     setStatus({ loading: true, error: null });
 
     try {
@@ -37,7 +31,7 @@ export default function Page() {
       const dtaSignupPayload = {
         email,
         password,
-        password_confirmation: passwordConfirmation,
+        password_confirmation: password,
         confirm_success_url: confirmSuccessUrl,
       };
 
@@ -103,19 +97,7 @@ export default function Page() {
               />
             </label>
 
-            <label className="form-control w-full">
-              <span className="label-text mb-1">Confirm password</span>
-              <input
-                type="password"
-                required
-                minLength={8}
-                autoComplete="new-password"
-                value={passwordConfirmation}
-                onChange={(e) => setPasswordConfirmation(e.target.value)}
-                className="input input-bordered w-full"
-                placeholder="Repeat password"
-              />
-            </label>
+            <p className="text-sm text-base-content/70">Body stats are collected after account creation.</p>
 
             {status.error && (
               <div className="alert alert-error">
