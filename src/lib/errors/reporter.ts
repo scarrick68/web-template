@@ -25,6 +25,11 @@ function sanitizeValue(value: unknown, seen: WeakSet<object> = new WeakSet()): u
   }
 
   if (Array.isArray(value)) {
+    if (seen.has(value)) {
+      return "[Circular]";
+    }
+
+    seen.add(value);
     return value.slice(0, 20).map((entry) => sanitizeValue(entry, seen));
   }
 

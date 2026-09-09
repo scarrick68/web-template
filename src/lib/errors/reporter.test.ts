@@ -86,4 +86,27 @@ describe("lib/errors reporter", () => {
 
     expect(payload.context.metadata.visitorId).toBeUndefined();
   });
+
+  it("sanitizes circular arrays instead of throwing", () => {
+    const circular: unknown[] = [];
+    circular.push(circular);
+
+    expect(() => {
+      buildErrorReportPayload("boom", {
+        context: {
+          samples: circular,
+        },
+      });
+    }).not.toThrow();
+
+    const payload = buildErrorReportPayload("boom", {
+      context: {
+        samples: circular,
+      },
+    });
+
+    expect(payload.context.explicit).toEqual({
+      samples: ["[Circular]"],
+    });
+  });
 });

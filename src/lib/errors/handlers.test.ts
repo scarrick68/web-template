@@ -62,5 +62,6 @@ describe("lib/errors handlers", () => {
     );
 
     cleanup();
+    addEventListenerSpy.mockRestore();
   });
 });
