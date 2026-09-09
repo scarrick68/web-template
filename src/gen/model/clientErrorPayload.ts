@@ -5,6 +5,8 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface AuthRequiredErrorResponse {
-  errors: string[];
+export interface ClientErrorPayload {
+  name?: string;
+  message: string;
+  stack?: string;
 }

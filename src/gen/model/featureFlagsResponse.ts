@@ -5,8 +5,8 @@
  * OpenAPI spec version: 1.0.0
  */
 import type { BaseSuccess } from './baseSuccess';
-import type { User } from './user';
+import type { FeatureFlagsResponseData } from './featureFlagsResponseData';
 
-export type UserShowResponse = BaseSuccess & {
-  data: User;
+export type FeatureFlagsResponse = BaseSuccess & {
+  data: FeatureFlagsResponseData;
 };

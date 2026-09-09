@@ -5,6 +5,4 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface AuthRequiredErrorResponse {
-  errors: string[];
-}
+export type FeatureFlagsResponseData = {[key: string]: boolean};

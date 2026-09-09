@@ -1,6 +1,6 @@
 openapi: 3.1.0
 info:
-  title: API Template
+  title: Better Macros V3 API
   version: 1.0.0
 servers:
   - url: /
@@ -188,6 +188,120 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserShowResponse'
+        '401':
+          description: Missing or invalid auth headers
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthRequiredErrorResponse'
+  /api/v1/features:
+    get:
+      summary: Effective feature flags for current authenticated user
+      security:
+        - AccessTokenAuth: []
+          ClientAuth: []
+          UidAuth: []
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Feature flag states for the current actor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeatureFlagsResponse'
+        '401':
+          description: Missing or invalid auth headers
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthRequiredErrorResponse'
+  /api/v1/errors:
+    post:
+      summary: Report client-side web/mobile JavaScript errors
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientErrorReportRequest'
+      responses:
+        '202':
+          description: Error report accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseSuccess'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/v1/push_devices:
+    post:
+      summary: Register or update current user's push device
+      security:
+        - AccessTokenAuth: []
+          ClientAuth: []
+          UidAuth: []
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PushDeviceRegistrationRequest'
+      responses:
+        '202':
+          description: Push registration accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseSuccess'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Missing or invalid auth headers
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthRequiredErrorResponse'
+    delete:
+      summary: Deactivate current user's push registration
+      security:
+        - AccessTokenAuth: []
+          ClientAuth: []
+          UidAuth: []
+        - BearerAuth: []
+      parameters:
+        - in: query
+          name: push_token
+          required: true
+          schema:
+            type: string
+      responses:
+        '202':
+          description: Push registration deactivation accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BaseSuccess'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Push token is not owned by current user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '401':
           description: Missing or invalid auth headers
           content:
@@ -431,6 +545,20 @@ components:
           format: email
         name:
           type: [string, 'null']
+        age:
+          type: [integer, 'null']
+        height_ft:
+          type: [integer, 'null']
+        height_inches:
+          type: [integer, 'null']
+        weight_lbs:
+          type: [number, 'null']
+        activity_level:
+          type: [integer, 'null']
+        goal:
+          type: [string, 'null']
+        time_zone:
+          type: [string, 'null']
         nickname:
           type: [string, 'null']
         image:
@@ -485,6 +613,8 @@ components:
     AuthSignUpRequest:
       type: object
       properties:
+        name:
+          type: string
         email:
           type: string
           format: email
@@ -495,6 +625,20 @@ components:
         confirm_success_url:
           type: string
           format: uri
+        age:
+          type: integer
+        height_ft:
+          type: integer
+        height_inches:
+          type: integer
+        weight_lbs:
+          type: number
+        activity_level:
+          type: integer
+        goal:
+          type: string
+        time_zone:
+          type: string
       required:
         - email
         - password
@@ -523,6 +667,20 @@ components:
           type: string
         password_confirmation:
           type: string
+        age:
+          type: integer
+        height_ft:
+          type: integer
+        height_inches:
+          type: integer
+        weight_lbs:
+          type: number
+        activity_level:
+          type: integer
+        goal:
+          type: string
+        time_zone:
+          type: string
       required:
         - email
         - password
@@ -535,6 +693,20 @@ components:
         email:
           type: string
           format: email
+        age:
+          type: integer
+        height_ft:
+          type: integer
+        height_inches:
+          type: integer
+        weight_lbs:
+          type: number
+        activity_level:
+          type: integer
+        goal:
+          type: string
+        time_zone:
+          type: string
     PaginationMeta:
       type: object
       properties:
@@ -575,6 +747,20 @@ components:
           format: email
         name:
           type: [string, 'null']
+        age:
+          type: [integer, 'null']
+        height_ft:
+          type: [integer, 'null']
+        height_inches:
+          type: [integer, 'null']
+        weight_lbs:
+          type: [number, 'null']
+        activity_level:
+          type: [integer, 'null']
+        goal:
+          type: [string, 'null']
+        time_zone:
+          type: [string, 'null']
         admin:
           type: boolean
         created_at:
@@ -605,3 +791,65 @@ components:
                 $ref: '#/components/schemas/User'
             meta:
               $ref: '#/components/schemas/PaginationEnvelope'
+    FeatureFlagsResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseSuccess'
+        - type: object
+          required:
+            - data
+          properties:
+            data:
+              type: object
+              additionalProperties:
+                type: boolean
+    ClientErrorReportRequest:
+      type: object
+      required:
+        - error
+      properties:
+        client:
+          type: string
+          description: Optional client type. Known values are mobile and web; omitted or unrecognized values are normalized to unknown server-side.
+          example: mobile
+        origin:
+          type: string
+          description: Client-reported origin/category (for example application, uncaught_exception, react_error_boundary).
+          example: application
+        handled:
+          type: boolean
+          default: true
+        error:
+          $ref: '#/components/schemas/ClientErrorPayload'
+        context:
+          type: object
+          additionalProperties: true
+    ClientErrorPayload:
+      type: object
+      required:
+        - message
+      properties:
+        name:
+          type: string
+          example: TypeError
+        message:
+          type: string
+        stack:
+          type: string
+    PushDeviceRegistrationRequest:
+      type: object
+      required:
+        - push_token
+      properties:
+        push_token:
+          type: string
+          example: ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]
+        platform:
+          type: string
+          description: Optional client platform value normalized server-side.
+          example: ios
+        app_version:
+          type: string
+          example: 1.4.0
+        build_version:
+          type: string
+          example: '42'

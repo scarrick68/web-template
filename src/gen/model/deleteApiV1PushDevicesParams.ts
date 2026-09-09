@@ -5,6 +5,6 @@
  * OpenAPI spec version: 1.0.0
  */
 
-export interface AuthRequiredErrorResponse {
-  errors: string[];
-}
+export type DeleteApiV1PushDevicesParams = {
+push_token: string;
+};
