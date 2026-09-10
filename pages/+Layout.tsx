@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Link } from "../components/Link";
 import { AppQueryProvider } from "../src/query/provider";
 import { getAuthTokens } from "../src/auth/tokenStore";
+import { installGlobalErrorHandlers } from "../src/lib/errors/handlers";
 
 const OSS_REPO_URL = "https://github.com/scarrick68/web-template";
 const OSS_DOCS_URL = "https://github.com/scarrick68/web-template/tree/main/docs";
@@ -23,6 +24,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     return () => {
       window.removeEventListener("storage", syncAuthState);
     };
+  }, []);
+
+  useEffect(() => {
+    return installGlobalErrorHandlers();
   }, []);
 
   useEffect(() => {
